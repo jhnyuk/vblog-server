@@ -26,6 +26,7 @@ public class Board {
     private String title;
     private String link;
     private String description;
+    private String thumbnails;
 
     @CreatedDate
     @Column(name = "CREATED_DATE", updatable = false, nullable = false)
