@@ -1,4 +1,4 @@
-package com.example.vblogserver.domain.hashtag.entity;
+package com.example.vblogserver.domain.category.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Hashtag {
+public class CategoryS {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
     private Long id;
-    private String hashtag;
+    private String categoryName;
 }
