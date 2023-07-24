@@ -13,11 +13,9 @@ public class BoardDTO {
     private String link;
     private String description;
 
-    public Board toEntity() {
-        return Board.builder()
-                .title(title)
-                .link(link)
-                .description(description)
-                .build();
+    public BoardDTO(Board board) {
+        this.title = board.getTitle();
+        this.link = board.getLink();
+        this.description = board.getDescription();
     }
 }
