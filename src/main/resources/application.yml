@@ -22,6 +22,11 @@ spring:
         show_sql: true
         format_sql: true
         use_sql_comments: true
+  apikey:
+    youtube: '${custom.dev_apikey.youtube}'
+    naver:
+      id : '${custom.dev_apikey.naver.id}'
+      secret : '${custom.dev_apikey.naver.secret}'
 
 # Swagger springdoc-ui configuration
 springdoc:
