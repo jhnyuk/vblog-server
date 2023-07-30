@@ -3,7 +3,6 @@ package com.example.vblogserver.domain.board.entity;
 import com.example.vblogserver.domain.category.entity.CategoryG;
 import com.example.vblogserver.domain.category.entity.CategoryM;
 import com.example.vblogserver.domain.category.entity.CategoryS;
-import com.example.vblogserver.domain.hashtag.entity.Hashtag;
 import com.example.vblogserver.domain.review.entity.Review;
 import com.example.vblogserver.domain.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,14 +31,12 @@ public class Board {
     @JsonIgnore
     private List<Review> reviews = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "USER_ID")
-    private User user;
-
+    private String writer;
     private String title;
     private String link;
     private String description;
     private String thumbnails;
+    private String hashtag;
 
     @CreatedDate
     @Column(name = "CREATED_DATE", updatable = false, nullable = false)
@@ -62,15 +59,13 @@ public class Board {
     @ManyToOne
     @JoinColumn(name = "category_s")
     private CategoryS categoryS;
-    @ManyToOne
-    @JoinColumn(name = "hashtag_id")
-    private Hashtag hashtag;
+
 
     @Builder
     public Board(String title, String link, String description, User user) {
         this.title = title;
         this.link = link;
         this.description = description;
-        this.user = user;
+
     }
 }

@@ -15,4 +15,8 @@ public class CategoryM {
     @Column(name = "id", updatable = false)
     private Long id;
     private String categoryName;
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 }
