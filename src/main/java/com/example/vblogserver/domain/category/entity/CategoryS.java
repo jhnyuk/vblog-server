@@ -19,4 +19,8 @@ public class CategoryS {
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
