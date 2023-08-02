@@ -37,15 +37,17 @@ public class BoardComponent implements CommandLineRunner {
         String keyword = "국내여행";
         int maxResults = 5;
         YoutubeService youtubeService = new YoutubeService();
-        String data = youtubeService.getYoutubeData(keyword,maxResults);
-
+        //String data = youtubeService.getYoutubeData(keyword,maxResults);
+        //JSONObject response = new JSONObject(data);
+        JSONObject response = youtubeService.getYoutubeData(keyword,maxResults);
         System.out.println("11");
-        JSONObject response = new JSONObject(data);
+
         JSONArray items = response.getJSONArray("items");
 
         List<Board> boards = new ArrayList<>();
 
-        for (int i = 0; i < response.length(); i++) {
+        for (int i = 0; i < items.length(); i++) {
+            System.out.println("items : "+items.toString());
             JSONObject json = items.getJSONObject(i);
             Board board = new Board();
             board.setCategoryG(categoryG);
@@ -58,6 +60,8 @@ public class BoardComponent implements CommandLineRunner {
             board.setHashtag(json.optString("heshtag"));
             board.setWriter(json.optString("writer"));
             board.setCreatedDate(json.optString("createDate"));
+
+            System.out.println("board : "+board.toString());
             boards.add(board);
         }
         boardRepository.saveAll(boards);

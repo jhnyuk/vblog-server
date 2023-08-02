@@ -50,10 +50,10 @@ public class Board {
     private Integer disLikeCount;
     private Float grade;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category_g")
     private CategoryG categoryG;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category_m")
     private CategoryM categoryM;
     @ManyToOne
@@ -67,5 +67,61 @@ public class Board {
         this.link = link;
         this.description = description;
 
+    }
+
+    public void setWriter(String writer) {
+        this.writer = writer;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setThumbnails(String thumbnails) {
+        this.thumbnails = thumbnails;
+    }
+
+    public void setHashtag(String hashtag) {
+        this.hashtag = hashtag;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public void setReviewCount(Integer reviewCount) {
+        this.reviewCount = reviewCount;
+    }
+
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public void setDisLikeCount(Integer disLikeCount) {
+        this.disLikeCount = disLikeCount;
+    }
+
+    public void setGrade(Float grade) {
+        this.grade = grade;
+    }
+
+    public void setCategoryG(CategoryG categoryG) {
+        this.categoryG = categoryG;
+    }
+
+    public void setCategoryM(CategoryM categoryM) {
+        this.categoryM = categoryM;
+    }
+
+    public void setCategoryS(CategoryS categoryS) {
+        this.categoryS = categoryS;
     }
 }
