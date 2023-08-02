@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 public class YoutubeService {
     @Value("${spring.apikey.youtube}")
     private String apikey;
+
     private final RestTemplate restTemplate = new RestTemplate();
     private final String BASE_URL = "https://content-youtube.googleapis.com/youtube/v3/search";
     private final String shorts = "쇼츠 ";
@@ -43,23 +44,28 @@ public class YoutubeService {
         // 추출할 데이터 값 셋팅
         String insertdata = "{\"items\":[";
         for (int i = 0; i < items.length(); i++) {
+            System.out.println(i);
             hashtagdata = "";
             snippet = items.getJSONObject(i).getJSONObject("snippet");
-
+            // 제목
             insertdata +="{\"title\":\""+snippet.optString("title")+"\",";
-            insertdata +="\"channelTitle\":\""+snippet.optString("channelTitle")+"\",";
-
+            System.out.println("Title : "+snippet.optString("title"));
+            //게시자
+            //insertdata +="\"channelTitle\":\""+snippet.optString("channelTitle")+"\",";
+            System.out.println("ChannelTitle : "+snippet.optString("channelTitle"));
+            insertdata +="\"writer\":\""+snippet.optString("channelTitle")+"\",";
+            //작성일자
             insertdata +="\"createDate\":\""+snippet.optString("publishedAt")+"\",";
+
             link = items.getJSONObject(i).getJSONObject("id");
-            //System.out.println("link : https://www.youtube.com/shorts/" + link.optString("videoId"));
+            System.out.println("link : https://www.youtube.com/shorts/" + link.optString("videoId"));
             insertdata +="\"link\":\"https://www.youtube.com/shorts/"+snippet.optString("videoId")+"\",";
-            //System.out.println("profile_img : " + snippet.optString("channelId"));
-            insertdata +="\"writer\":\""+snippet.optString("channelId")+"\",";
+            System.out.println("profile_img : " + snippet.optString("channelId"));
             thum = new JSONObject(snippet.optString("thumbnails"));
             thum2 = new JSONObject(thum.optString("default"));
-            //System.out.println("thumbnails : " + thum2.optString("url"));
-            insertdata +="\"thumbnails\":\""+snippet.optString("url")+"\",";
-            //System.out.println("description : " + snippet.optString("description"));
+            System.out.println("thumbnails : " + thum2.optString("url"));
+            insertdata +="\"thumbnails\":\""+thum2.optString("url")+"\",";
+            System.out.println("description : " + snippet.optString("description"));
             insertdata +="\"description\":\""+snippet.optString("description")+"\",";
             title = snippet.optString("title");
             String gettitle[] = title.split("#");
