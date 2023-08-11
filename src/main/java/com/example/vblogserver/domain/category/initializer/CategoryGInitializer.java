@@ -1,6 +1,7 @@
 package com.example.vblogserver.domain.category.initializer;
 
 import com.example.vblogserver.domain.category.entity.CategoryG;
+import com.example.vblogserver.domain.category.entity.CategoryM;
 import com.example.vblogserver.domain.category.repository.CategoryGRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -17,12 +18,14 @@ public class CategoryGInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... arg){
-        CategoryG categoryG1 = new CategoryG();
-        categoryG1.setCategoryName("vlog");
-        categoryGRepository.save(categoryG1);
 
-        CategoryG categoryG2 = new CategoryG();
-        categoryG2.setCategoryName("blog");
-        categoryGRepository.save(categoryG2);
+        String[] categoryG_name = {"vlog","blog"};
+
+        for(int i=0; i<categoryG_name.length; i++) {
+            CategoryG categoryG = new CategoryG();
+            categoryG.setCategoryName(categoryG_name[i]);
+            categoryGRepository.save(categoryG);
+        }
+
     }
 }

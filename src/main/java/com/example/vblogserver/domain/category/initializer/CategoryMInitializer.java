@@ -15,8 +15,13 @@ public class CategoryMInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args){
-        CategoryM categoryM1 = new CategoryM();
-        categoryM1.setCategoryName("여행");
-        categoryMRepository.save(categoryM1);
+
+        String[] categoryM_name = {"여행","게임","건강","맛집","방송","뷰티"};
+
+        for(int i=0; i<categoryM_name.length; i++) {
+            CategoryM categoryM = new CategoryM();
+            categoryM.setCategoryName(categoryM_name[i]);
+            categoryMRepository.save(categoryM);
+        }
     }
 }
