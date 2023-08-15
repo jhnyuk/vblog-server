@@ -69,6 +69,10 @@ public class Board {
 
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void setWriter(String writer) {
         this.writer = writer;
     }
@@ -124,4 +128,10 @@ public class Board {
     public void setCategoryS(CategoryS categoryS) {
         this.categoryS = categoryS;
     }
+
+    public String getHashtag() {
+        return hashtag;
+    }
+
+
 }
