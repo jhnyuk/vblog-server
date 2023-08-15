@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainBoardDTO {
-    private int ContentId;
+    private Long ContentId;
     private String ContentDate;
     private String ContentTitle;
     private String Content;
@@ -12,14 +12,14 @@ public class MainBoardDTO {
     private int Review;
     private String UserName;
     private List<String> Hashtags;
-    private String thumbnails;
 
 
-    public int getContentId() {
+
+    public Long getContentId() {
         return ContentId;
     }
 
-    public void setContentId(int contentId) {
+    public void setContentId(Long contentId) {
         ContentId = contentId;
     }
 
@@ -83,7 +83,4 @@ public class MainBoardDTO {
         Hashtags = hashtagsList.subList(1, hashtagsList.size());
     }
 
-    public String getThumbnails() {
-        return thumbnails;
-    }
 }

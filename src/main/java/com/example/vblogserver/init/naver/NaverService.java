@@ -23,7 +23,12 @@ public class NaverService {
         for (NaverEntity.Item item : items) {
             insertdata +="{\"title\":\"" + item.getTitle()+"\",";
             insertdata +="\"writer\":\"" + item.getBloggername()+"\",";
-            insertdata +="\"createDate\":\"" + item.getPostdate()+"\",";
+
+            String year = item.getPostdate().substring(0, 4);
+            String month = item.getPostdate().substring(4, 6);
+            String day = item.getPostdate().substring(6, 8);
+            String formattedDate = year + "." + month + "." + day;
+            insertdata +="\"createDate\":\"" + formattedDate+"\",";
             insertdata +="\"link\":\"" + item.getLink()+"\",";
             insertdata +="\"description\":\"" + item.getDescription()+"\",";
 

@@ -41,6 +41,7 @@ public class MainListController {
         clientDataDTO.setUserName(board.getWriter());
         clientDataDTO.setContent(board.getDescription());
         clientDataDTO.setHashtags(board.getHashtag());
+        clientDataDTO.setContentId(board.getId());
         //imageUrl
 
         return clientDataDTO;
