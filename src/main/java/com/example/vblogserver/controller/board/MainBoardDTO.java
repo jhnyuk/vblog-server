@@ -12,8 +12,7 @@ public class MainBoardDTO {
     private int Review;
     private String UserName;
     private List<String> Hashtags;
-
-
+    private String imgurl;
 
     public Long getContentId() {
         return ContentId;
@@ -83,4 +82,11 @@ public class MainBoardDTO {
         Hashtags = hashtagsList.subList(1, hashtagsList.size());
     }
 
+    public String getImgurl() {
+        return imgurl;
+    }
+
+    public void setImgurl(String imgurl) {
+        this.imgurl = imgurl;
+    }
 }

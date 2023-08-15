@@ -3,6 +3,7 @@ package com.example.vblogserver.controller.board;
 import com.example.vblogserver.domain.board.entity.Board;
 import com.example.vblogserver.domain.board.repository.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins = "http://allowed-origin.com")
 @RequestMapping("/vlog")
 public class MainListController {
 
@@ -42,8 +44,7 @@ public class MainListController {
         clientDataDTO.setContent(board.getDescription());
         clientDataDTO.setHashtags(board.getHashtag());
         clientDataDTO.setContentId(board.getId());
-        //imageUrl
-
+        clientDataDTO.setImgurl(board.getThumbnails());
         return clientDataDTO;
     }
 }
