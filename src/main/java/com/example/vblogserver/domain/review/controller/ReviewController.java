@@ -58,12 +58,13 @@ public class ReviewController {
 
     // 리뷰 작성
     @PostMapping("/{boardId}")
-    public ResponseEntity<String> createReview(@PathVariable Long boardId, @RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, Object>> createReview(@PathVariable Long boardId, @RequestBody Map<String, String> request) {
         //BoardID 로 게시글 조회
         Board board = boardService.getBoardById(boardId);
 
         if (board == null) {
-            return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"게시글이 존재하지 않습니다\"}");
+            //return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"게시글이 존재하지 않습니다\"}");
+            return ResponseEntity.ok().body(Map.of("result", false, "reason", "게시글이 존재하지 않습니다"));
         }
         String content = request.get("content");
         System.out.println("content : "+content);
@@ -75,7 +76,9 @@ public class ReviewController {
         try {
             user = userRepository.findByEmail(userEmail).orElseThrow(() -> new IllegalArgumentException(userEmail + "을 찾을 수 없습니다"));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.ok("{\"result\" : false,\"reason\" : \""+userEmail+"을 찾을 수 없습니다\"}");
+            //return ResponseEntity.ok("{\"result\" : false,\"reason\" : \""+userEmail+"을 찾을 수 없습니다\"}");
+            return ResponseEntity.ok().body(Map.of("result", false, "reason", userEmail+"을 찾을 수 없습니다"));
+
         }
         Review newReview = Review.builder()
                 .content(content)
@@ -86,20 +89,23 @@ public class ReviewController {
         Review saveReview = reviewRepository.save(newReview);
         //리뷰 저장 성공 시 true, 실패 시 false
         if(saveReview != null){
-            return ResponseEntity.ok("{\"result\" : true,\"reason\" : \"저장 성공\"}");
+            return ResponseEntity.ok().body(Map.of("result", true, "reason", "저장 성공"));
+            //return ResponseEntity.ok("{\"result\" : true,\"reason\" : \"저장 성공\"}");
         } else{
-            return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"저장 실패\"}");
+            return ResponseEntity.ok().body(Map.of("result", false, "reason", "저장 실패"));
+            //return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"저장 실패\"}");
         }
     }
 
     //리뷰 수정
     @PutMapping("/{reviewId}")
-    public ResponseEntity<String> updateReview(@PathVariable Long reviewId, @RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, Object>> updateReview(@PathVariable Long reviewId, @RequestBody Map<String, String> request) {
         // 리뷰 ID로 리뷰 조회
         Review review = reviewRepository.findById(reviewId).orElse(null);
 
         if (review == null) {
-            return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"수정할 리뷰가 존재하지 않습니다\"}");
+            return ResponseEntity.ok().body(Map.of("result", false, "reason", "수정할 리뷰가 존재하지 않습니다"));
+            //return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"수정할 리뷰가 존재하지 않습니다\"}");
         }
         System.out.println("request.get(\"content\") : "+request.get("content"));
         String newContent = request.get("content");
@@ -111,26 +117,29 @@ public class ReviewController {
         Review updatedReview = reviewRepository.save(review);
         System.out.println("updatedReview.getContent() : "+updatedReview.getContent());
         if (updatedReview != null) {
-            return ResponseEntity.ok("{\"result\" : true,\"reason\" : \"수정 성공\"}");
+            return ResponseEntity.ok().body(Map.of("result", true, "reason", "수정 성공"));
+            //return ResponseEntity.ok("{\"result\" : true,\"reason\" : \"수정 성공\"}");
         } else {
-            return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"수정 실패\"}");
+            return ResponseEntity.ok().body(Map.of("result", false, "reason", "수정 실패"));
+            //return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"수정 실패\"}");
         }
     }
 
 
     //리뷰 삭제
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<String> deleteReview(@PathVariable Long reviewId) {
+    public ResponseEntity<Map<String, Object>> deleteReview(@PathVariable Long reviewId) {
         // 리뷰 ID로 리뷰 조회
         Review review = reviewRepository.findById(reviewId).orElse(null);
 
         if (review == null) {
-            return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"삭제할 리뷰가 존재하지 않습니다\"}");
+            return ResponseEntity.ok().body(Map.of("result", false, "reason", "삭제할 리뷰가 존재하지 않습니다"));
+            //return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"삭제할 리뷰가 존재하지 않습니다\"}");
         }
 
         // 리뷰 삭제
         reviewRepository.delete(review);
-
-        return ResponseEntity.ok("{\"result\" : true,\"reason\" : \"삭제 성공\"}");
+        return ResponseEntity.ok().body(Map.of("result", true, "reason", "삭제 성공"));
+        //return ResponseEntity.ok("{\"result\" : true,\"reason\" : \"삭제 성공\"}");
     }
 }
