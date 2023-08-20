@@ -48,4 +48,8 @@ public class Review {
     public void prePersist(){
         createdDate = LocalDateTime.now();
     }
+
+    public void setContent(String newContent) {
+        this.content = newContent;
+    }
 }

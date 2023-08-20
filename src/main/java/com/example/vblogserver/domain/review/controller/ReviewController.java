@@ -32,8 +32,9 @@ public class ReviewController {
         this.reviewRepository = reviewRepository;
     }
 
+    // 리뷰 조회
     @GetMapping("/{boardId}")
-    public ResponseEntity<List<ReviewDTO>> getReviewByBoardId(@PathVariable Long boardId) {
+    public ResponseEntity<List<ReviewDTO>> readReview(@PathVariable Long boardId) {
         List<Review> reviews = reviewService.getReviewByBoardId(boardId);
 
         if (reviews.isEmpty()) {
@@ -55,6 +56,7 @@ public class ReviewController {
 
     }
 
+    // 리뷰 작성
     @PostMapping("/{boardId}")
     public ResponseEntity<String> createReview(@PathVariable Long boardId, @RequestBody Map<String, String> request) {
         //BoardID 로 게시글 조회
@@ -64,7 +66,9 @@ public class ReviewController {
             return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"게시글이 존재하지 않습니다\"}");
         }
         String content = request.get("content");
+        System.out.println("content : "+content);
         String userEmail = request.get("userEmail");
+        System.out.println("userEmail : "+userEmail);
 
         //user Email 로 계정 조회
         User user;
@@ -88,4 +92,45 @@ public class ReviewController {
         }
     }
 
+    //리뷰 수정
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<String> updateReview(@PathVariable Long reviewId, @RequestBody Map<String, String> request) {
+        // 리뷰 ID로 리뷰 조회
+        Review review = reviewRepository.findById(reviewId).orElse(null);
+
+        if (review == null) {
+            return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"수정할 리뷰가 존재하지 않습니다\"}");
+        }
+        System.out.println("request.get(\"content\") : "+request.get("content"));
+        String newContent = request.get("content");
+        System.out.println("newContent : "+newContent);
+
+
+        // 리뷰 내용 수정
+        review.setContent(newContent);
+        Review updatedReview = reviewRepository.save(review);
+        System.out.println("updatedReview.getContent() : "+updatedReview.getContent());
+        if (updatedReview != null) {
+            return ResponseEntity.ok("{\"result\" : true,\"reason\" : \"수정 성공\"}");
+        } else {
+            return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"수정 실패\"}");
+        }
+    }
+
+
+    //리뷰 삭제
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<String> deleteReview(@PathVariable Long reviewId) {
+        // 리뷰 ID로 리뷰 조회
+        Review review = reviewRepository.findById(reviewId).orElse(null);
+
+        if (review == null) {
+            return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"삭제할 리뷰가 존재하지 않습니다\"}");
+        }
+
+        // 리뷰 삭제
+        reviewRepository.delete(review);
+
+        return ResponseEntity.ok("{\"result\" : true,\"reason\" : \"삭제 성공\"}");
+    }
 }
