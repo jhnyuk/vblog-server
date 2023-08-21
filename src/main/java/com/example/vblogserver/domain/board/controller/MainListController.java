@@ -1,5 +1,6 @@
-package com.example.vblogserver.controller.board;
+package com.example.vblogserver.domain.board.controller;
 
+import com.example.vblogserver.domain.board.dto.MainBoardDTO;
 import com.example.vblogserver.domain.board.entity.Board;
 import com.example.vblogserver.domain.board.repository.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;

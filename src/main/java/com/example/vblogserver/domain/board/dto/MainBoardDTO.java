@@ -1,4 +1,4 @@
-package com.example.vblogserver.controller.board;
+package com.example.vblogserver.domain.board.dto;
 
 import java.util.Arrays;
 import java.util.List;
