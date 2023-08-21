@@ -67,7 +67,7 @@ public class BoardComponent implements CommandLineRunner {
 
                     //vlog
                     if (z==1) response = youtubeService.getYoutubeData(categoryS_name[y], maxResults);
-                    //blog
+                        //blog
                     else if (z==2) response = naverService.getNaverData(categoryS_name[y], maxResults);
 
                         //String data = "{\"items\":[{\"link\":\"https://www.youtube.com/shorts/i0pHAgAt3xI\",\"description\":\"제주도 #제주도여행 #여행브이로그 #국내여행 #여행유튜버 #우도 #제주도유채꽃 #봄여행지추천 #유채꽃 #성산일출봉 #shorts #jeju ...\",\"writer\":\"정문츄☀\uFE0E : 여행하는 신입사원\",\"title\":\"공항에서 꼭 찍어야하는 #여행쇼츠 #여행릴스\",\"thumbnails\":\"https://i.ytimg.com/vi/i0pHAgAt3xI/default.jpg\",\"createDate\":\"2023-04-06T09:45:03Z\",\"heshtag\":\"#여행쇼츠#여행릴스#제주도여행#여행브이로그#국내여행#여행유튜버#우도#제주도유채꽃#봄여행지추천#유채꽃#성산일출봉#shorts#jeju\"}]}" ;
@@ -96,9 +96,12 @@ public class BoardComponent implements CommandLineRunner {
                         board.setCategoryG(categoryG);
                         board.setCategoryM(categoryM);
                         board.setCategoryS(categoryS);
-                        board.setTitle(json.optString("title"));
+                        String get_title = json.optString("title");
+                        board.setTitle(get_title.replaceAll("<b>|</b>", ""));
                         board.setLink(json.optString("link"));
-                        board.setDescription(json.optString("description"));
+
+                        String get_description = json.optString("description");
+                        board.setDescription(get_description.replaceAll("<b>|</b>", ""));
                         board.setThumbnails(json.optString("thumbnails"));
                         board.setHashtag(json.optString("heshtag"));
                         board.setWriter(json.optString("writer"));
