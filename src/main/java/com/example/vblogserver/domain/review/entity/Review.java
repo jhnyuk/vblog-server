@@ -36,14 +36,22 @@ public class Review {
     @JoinColumn(name = "user_id")
     private User user;
 
+    // 평점
+    private float grade;
+
+    public void setGrade(float grade) {
+        this.grade = grade;
+    }
+
     @Builder
-    public Review(String content, Board board, User user) {
+    public Review(String content, Board board, User user, float grade) {
         this.content = content;
         this.board = board;
         this.user = user;
+        this.grade = grade;
     }
 
-    //댓글 작성 시간을 서버의 시간으로 insert
+    //사용자가 별도 작성 시간 입력 없이 댓글 작성이 완료되면 시간을 서버의 시간으로 insert
     @PrePersist
     public void prePersist(){
         createdDate = LocalDateTime.now();

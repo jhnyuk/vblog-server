@@ -12,9 +12,14 @@ public class ReviewDTO {
     private String content;
     //리뷰 작성 일자
     private String createdDate;
+    //작성자
     private String userEmail;
+    //평점
+    private float grade;
 
-
+    public void setGrade(float grade) {
+        this.grade = grade;
+    }
 
     public String getUserEmail() {
         return userEmail;
@@ -42,6 +47,10 @@ public class ReviewDTO {
 
     public String getCreatedDate() {
         return createdDate;
+    }
+
+    public float getGrade() {
+        return grade;
     }
 
     public void setCreatedDate(LocalDateTime createdDate) {
