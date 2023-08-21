@@ -34,7 +34,7 @@ public class DetailController {
 
         // 랭킹 계산 (좋아요 순으로 정렬)
         List<Board> findAllBoards = boardRepository.findAll();
-        findAllBoards.sort(Comparator.comparing(Board::getLikeCount).reversed());
+        findAllBoards.sort(Comparator.comparing(Board::getLikeCount, Comparator.nullsLast(Comparator.reverseOrder())));
         int rank = findAllBoards.indexOf(board) + 1;
 
         // return : BoardDetailDTO
@@ -43,7 +43,9 @@ public class DetailController {
         boardDetailDTO.setContentTitle(board.getTitle());
         boardDetailDTO.setContent(board.getDescription());
         boardDetailDTO.setUserName(board.getWriter());
-        boardDetailDTO.setHashtags(Arrays.asList(board.getHashtag().split("#")));
+        String[] hashtags = board.getHashtag().split("#");
+        List<String> hashtagList = Arrays.asList(hashtags).subList(1, hashtags.length);
+        boardDetailDTO.setHashtags(hashtagList);
         boardDetailDTO.setRank(rank);
         boardDetailDTO.setGrade(board.getGrade());
         boardDetailDTO.setHeart(board.getLikeCount());
