@@ -66,15 +66,15 @@ public class BoardComponent implements CommandLineRunner {
                     JSONObject response = new JSONObject();
 
                     //vlog
-                    if (z==1) response = youtubeService.getYoutubeData(categoryS_name[y], maxResults);
+                    //if (z==1) response = youtubeService.getYoutubeData(categoryS_name[y], maxResults);
                         //blog
-                    else if (z==2) response = naverService.getNaverData(categoryS_name[y], maxResults);
+                    //else if (z==2) response = naverService.getNaverData(categoryS_name[y], maxResults);
+                    response = naverService.getNaverData(categoryS_name[y], maxResults);
 
                         //String data = "{\"items\":[{\"link\":\"https://www.youtube.com/shorts/i0pHAgAt3xI\",\"description\":\"제주도 #제주도여행 #여행브이로그 #국내여행 #여행유튜버 #우도 #제주도유채꽃 #봄여행지추천 #유채꽃 #성산일출봉 #shorts #jeju ...\",\"writer\":\"정문츄☀\uFE0E : 여행하는 신입사원\",\"title\":\"공항에서 꼭 찍어야하는 #여행쇼츠 #여행릴스\",\"thumbnails\":\"https://i.ytimg.com/vi/i0pHAgAt3xI/default.jpg\",\"createDate\":\"2023-04-06T09:45:03Z\",\"heshtag\":\"#여행쇼츠#여행릴스#제주도여행#여행브이로그#국내여행#여행유튜버#우도#제주도유채꽃#봄여행지추천#유채꽃#성산일출봉#shorts#jeju\"}]}" ;
                         //if (z==1) response = new JSONObject(data);
 
 
-                    else return ;
                     System.out.println("responst : "+response);
                     //{"items":[{"link":"https://www.youtube.com/shorts/H2uANT5s_Vo","description":"","writer":"일상이 여행 Everyday travel","title":"나만 알고싶은 최고의 여행지 #국내여행 #국내여행추천 #한국여행 #숨은명소 #여행유튜버 #한국관광100선 #대한민국구석구석","thumbnails":"https://i.ytimg.com/vi/H2uANT5s_Vo/default.jpg","createDate":"2023-01-26T05:21:53Z","heshtag":"#국내여행#국내여행추천#한국여행#숨은명소#여행유튜버#한국관광100선#대한민국구석구석"}]}
                     //{"items":[{"link":"https://www.youtube.com/shorts/i0pHAgAt3xI","description":"제주도 #제주도여행 #여행브이로그 #국내여행 #여행유튜버 #우도 #제주도유채꽃 #봄여행지추천 #유채꽃 #성산일출봉 #shorts #jeju ...","writer":"정문츄☀︎ : 여행하는 신입사원","title":"공항에서 꼭 찍어야하는 #여행쇼츠 #여행릴스","thumbnails":"https://i.ytimg.com/vi/i0pHAgAt3xI/default.jpg","createDate":"2023-04-06T09:45:03Z","heshtag":"#여행쇼츠#여행릴스#제주도여행#여행브이로그#국내여행#여행유튜버#우도#제주도유채꽃#봄여행지추천#유채꽃#성산일출봉#shorts#jeju"}]}
@@ -111,6 +111,16 @@ public class BoardComponent implements CommandLineRunner {
                         boards.add(board);
                     }
                     boardRepository.saveAll(boards);
+                    /*
+                        데이터 조회 시
+                        429 Too Many Requests: "{"errorMessage":"Rate limit exceeded. (속도 제한을 초과했습니다.)","errorCode":"012"}"
+                        오류가 발생하여 반복 실행 시 시간차를 두고 반복 실행
+                     */
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                 }
 
             }
