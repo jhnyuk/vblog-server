@@ -32,6 +32,10 @@ public class Board {
     private List<Review> reviews = new ArrayList<>();
 
     private String writer;
+
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    private User user;
     private String title;
     private String link;
     private String description;

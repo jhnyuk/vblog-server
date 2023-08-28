@@ -1,7 +1,6 @@
 package com.example.vblogserver.domain.review.entity;
 
 import com.example.vblogserver.domain.board.entity.Board;
-import com.example.vblogserver.domain.category.entity.CategoryS;
 import com.example.vblogserver.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

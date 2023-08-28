@@ -15,8 +15,11 @@ repositories {
     mavenCentral()
 }
 
+jar {
+    enabled = false
+}
+
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -48,6 +51,7 @@ dependencies {
 
     //JSON parse
     implementation group: 'org.json', name: 'json', version: '20230618'
+
 }
 
 tasks.named('test') {
