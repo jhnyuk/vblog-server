@@ -49,9 +49,8 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.projectlombok:lombok'
 
-    // Json Parser
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.1'
+    //JSON parse
+    implementation group: 'org.json', name: 'json', version: '20230618'
 
 }
 
