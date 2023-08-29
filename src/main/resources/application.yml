@@ -17,14 +17,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+      generate-ddl: true
     properties:
       hibernate:
         show_sql: true
         format_sql: true
         use_sql_comments: true
-      ddl-auto: update
-    generate-ddl: true
-
 
 # Swagger springdoc-ui configuration
 springdoc:
@@ -42,3 +40,12 @@ springdoc:
     cache:
       disabled: true
 
+# jwt 토큰
+jwt:
+  secretKey:
+  access:
+    expiration: 3600000 # 1시간(60분) (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h))
+    header: Authorization
+  refresh:
+    expiration: 1209600000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 14(2주))
+    header: Authorization-refresh
