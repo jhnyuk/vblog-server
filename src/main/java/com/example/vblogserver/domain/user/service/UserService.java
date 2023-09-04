@@ -35,10 +35,6 @@ public class UserService {
             throw new Exception("이미 존재하는 아이디입니다.");
         }
 
-        if (userRepository.findByUsername(userSignUpDto.getUsername()).isPresent()) {
-            throw new Exception("이미 존재하는 별명입니다.");
-        }
-
         User user = User.builder()
             .email(userSignUpDto.getEmail())
             .password(userSignUpDto.getPassword())
@@ -59,9 +55,11 @@ public class UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
+    /*
     public boolean isUsernameDuplicated(String username) {
         return userRepository.findByUsername(username).isPresent();
     }
+     */
 
     public User login(String loginid, String password) throws Exception {
         User user = userRepository.findByLoginid(loginid)
