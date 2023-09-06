@@ -26,10 +26,10 @@ public class DetailController {
         this.boardRepository = boardRepository;
     }
 
-    @GetMapping("/{boardId}")
-    public ResponseEntity<BoardDetailDTO> readDetailBoard(@PathVariable Long boardId) {
+    @GetMapping("/board/{contentId}")
+    public ResponseEntity<BoardDetailDTO> readDetailBoard(@PathVariable Long contentId) {
         // boardId 게시글이 없을 경우
-        Board board = boardRepository.findById(boardId)
+        Board board = boardRepository.findById(contentId)
                 .orElseThrow(() -> new NoSuchElementException("조회된 게시글이 없습니다."));
 
         // 랭킹 계산 (좋아요 순으로 정렬)
