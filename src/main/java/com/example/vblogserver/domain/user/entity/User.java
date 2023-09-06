@@ -1,49 +1,59 @@
 package com.example.vblogserver.domain.user.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "USERS")
 @AllArgsConstructor
+@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "user_id")
     private Long id;
-    private String pw;
-
-    @Column(nullable = false, unique = true)
-    private String userId; // 유저 아이디
-    private String nickname;
-    @Column(unique = true, nullable = false)
-    private String email; // 가입 이메일
-    private Integer age;
-    private String gender;
-    private String profileUrl; // 프로필 사진
+    private String email; // 이메일
+    private String loginid; // 아이디
+    private String password; // 비밀번호
+    private String username; // 이름
+    private String imageUrl; // 프로필 이미지
     @CreatedDate
     private LocalDateTime createDate; // 가입 날짜
 
-    //OAuth2
-    private String provider; // google, naver, kakao
-    private String providerId; // OAuth의 key(id)
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    @Builder
-    public User(String email, String userId, String nickname, String profileUrl, Integer age, String gender, String provider, String providerId) {
-        this.email = email;
-        this.userId = userId;
-        this.nickname = nickname;
-        this.age = age;
-        this.gender = gender;
-        this.profileUrl = profileUrl;
-        this.provider = provider;
-        this.providerId = providerId;
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType; // KAKAO, NAVER, GOOGLE
+    private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
+
+    private String refreshToken; // 리프레시 토큰
+
+    // 유저 권한 설정 메소드
+    public void authorizeUser() {
+        this.role = Role.USER;
+    }
+
+    // 비밀번호 암호화 메소드
+    public void passwordEncode(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(this.password);
+    }
+
+    public void updateRefreshToken(String updateRefreshToken) {
+        this.refreshToken = updateRefreshToken;
     }
 }
