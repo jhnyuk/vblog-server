@@ -18,11 +18,11 @@ public class LoginService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
-		User user = userRepository.findByLoginid(loginId)
+		User user = userRepository.findByLoginId(loginId)
 			.orElseThrow(() -> new UsernameNotFoundException("해당 아이디가 존재하지 않습니다."));
 
 		return org.springframework.security.core.userdetails.User.builder()
-			.username(user.getLoginid())
+			.username(user.getLoginId())
 			.password(user.getPassword())
 			.roles(user.getRole().name())
 			.build();

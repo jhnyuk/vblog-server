@@ -27,7 +27,7 @@ public class User {
     @Column(name = "user_id")
     private Long id;
     private String email; // 이메일
-    private String loginid; // 아이디
+    private String loginId; // 아이디
     private String password; // 비밀번호
     private String username; // 이름
     private String imageUrl; // 프로필 이미지

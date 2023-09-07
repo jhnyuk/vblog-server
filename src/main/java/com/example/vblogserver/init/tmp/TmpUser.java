@@ -18,7 +18,7 @@ public class TmpUser implements CommandLineRunner {
     public void run(String... args) throws Exception {
         User testUser = User.builder()
                 .email("test@testmail.com")
-                .loginid("testuser")
+                .loginId("testuser")
                 .password("Test123!pw")
                 .username("thisistest")
                 .imageUrl("https://example.com/profile.jpg")

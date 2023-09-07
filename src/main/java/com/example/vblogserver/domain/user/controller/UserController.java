@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,14 +37,15 @@ public class UserController {
     }
 
     @GetMapping("/check-id")
-    public ResponseEntity<ResponseDto> checkId(@RequestParam String loginid) {
-        boolean isDuplicated = userService.isLoginIdDuplicated(loginid);
+    public ResponseEntity<ResponseDto> checkId(@RequestParam String loginId) {
+        boolean isDuplicated = userService.isLoginIdDuplicated(loginId);
         ResponseDto response = new ResponseDto();
         response.setResult(isDuplicated);
         response.setMessage(isDuplicated ? "이미 사용 중인 아이디입니다." : "사용 가능한 아이디입니다.");
         return ResponseEntity.ok(response);
     }
 
+    /*
     @GetMapping("/check-email")
     public ResponseEntity<ResponseDto> checkEmail(@RequestParam String email) {
         boolean isDuplicated = userService.isEmailDuplicated(email);
@@ -54,4 +54,6 @@ public class UserController {
         response.setMessage(isDuplicated ? "이미 사용 중인 이메일입니다." : "사용 가능한 이메일입니다.");
         return ResponseEntity.ok(response);
     }
+
+     */
 }
