@@ -36,7 +36,7 @@ public class UserService {
         }
 
         User user = User.builder()
-            .email(userSignUpDto.getEmail())
+            //.email(userSignUpDto.getEmail())
             .password(userSignUpDto.getPassword())
             .loginId(userSignUpDto.getLoginId())
             .username(userSignUpDto.getUsername())
@@ -77,7 +77,6 @@ public class UserService {
     @PostConstruct
     public void createTestUser() {
         User testUser = User.builder()
-            .email("test@example.com")
             .password("Test123!pw")
             .loginId("testuser")
             .username("testuser")
