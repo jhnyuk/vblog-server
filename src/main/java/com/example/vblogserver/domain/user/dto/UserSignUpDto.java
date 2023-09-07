@@ -11,13 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class UserSignUpDto {
-	@NotBlank(message = "Email cannot be empty")
-	@Email(message = "Enter a valid email address")
-	private String email;
-
 	@NotBlank(message = "Login ID cannot be empty")
 	@Pattern(regexp="^[a-zA-Z0-9]{4,12}$", message="Login ID must be 4 to 12 characters (Alphanumeric only)")
-	private String loginid;
+	private String loginId;
 
 	@NotBlank(message = "Password cannot be empty")
 	@Size(min=8, max=16, message="Password must be between 8 and 16 characters long")

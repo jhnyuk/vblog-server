@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -21,13 +22,13 @@ import java.time.LocalDateTime;
 @Table(name = "USERS")
 @AllArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
-    private String email; // 이메일
-    private String loginid; // 아이디
+    private String loginId; // 아이디
     private String password; // 비밀번호
     private String username; // 이름
     private String imageUrl; // 프로필 이미지
@@ -55,5 +56,12 @@ public class User {
 
     public void updateRefreshToken(String updateRefreshToken) {
         this.refreshToken = updateRefreshToken;
+    }
+
+    public User(String loginId, String password, String username) {
+        this.loginId = loginId;
+        this.password = password;
+        this.username = username;
+        this.createDate = LocalDateTime.now();
     }
 }

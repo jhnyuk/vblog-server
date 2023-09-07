@@ -42,8 +42,8 @@ public class JwtService {
 	 */
 	private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
 	private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-	private static final String EMAIL_CLAIM = "email";
-	private static final String ID_CLAIM = "loginid";
+	// private static final String EMAIL_CLAIM = "email";
+	private static final String ID_CLAIM = "loginId";
 	private static final String NAME_CLAIM = "username";
 	private static final String BEARER = "Bearer ";
 
@@ -52,12 +52,12 @@ public class JwtService {
 	/**
 	 * AccessToken 생성 메소드
 	 */
-	public String createAccessToken(String loginid) {
+	public String createAccessToken(String loginId) {
 		Date now = new Date();
 		return JWT.create() // JWT 토큰을 생성하는 빌더 반환
 			.withSubject(ACCESS_TOKEN_SUBJECT) // JWT의 Subject 지정 -> AccessToken이므로 AccessToken
 			.withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod)) // 토큰 만료 시간 설정
-			.withClaim(ID_CLAIM, loginid)
+			.withClaim(ID_CLAIM, loginId)
 			.sign(Algorithm.HMAC512(secretKey)); // HMAC512 알고리즘 사용, application-jwt.yml에서 지정한 secret 키로 암호화
 	}
 
@@ -158,7 +158,7 @@ public class JwtService {
 	 * RefreshToken DB 저장(업데이트)
 	 */
 	public void updateRefreshToken(String id, String refreshToken) {
-		userRepository.findByLoginid(id)
+		userRepository.findByLoginId(id)
 			.ifPresentOrElse(
 				user -> user.updateRefreshToken(refreshToken),
 				() -> new Exception("일치하는 회원이 없습니다.")

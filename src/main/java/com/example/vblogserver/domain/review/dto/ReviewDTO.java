@@ -21,6 +21,7 @@ public class ReviewDTO {
         this.grade = grade;
     }
 
+    /*
     public String getUserEmail() {
         return userEmail;
     }
@@ -28,6 +29,8 @@ public class ReviewDTO {
     public void setUserEmail(User user) {
         this.userEmail = user.getEmail();
     }
+
+     */
 
     public Long getId() {
         return id;
