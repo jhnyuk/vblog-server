@@ -9,6 +9,7 @@ import com.example.vblogserver.domain.user.entity.Role;
 import com.example.vblogserver.domain.user.entity.User;
 import com.example.vblogserver.domain.user.repository.UserRepository;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -73,5 +74,20 @@ public class UserService {
         return user;
     }
 
+    @PostConstruct
+    public void createTestUser() {
+        User testUser = User.builder()
+            .email("test@example.com")
+            .password("Test123!pw")
+            .loginId("testuser")
+            .username("testuser")
+            .imageUrl("https://example.com/profile.jpg")
+            .role(Role.USER)
+            .socialId(null)
+            .build();
+
+        testUser.passwordEncode(passwordEncoder);
+        userRepository.save(testUser);
+    }
 
 }
