@@ -71,12 +71,15 @@ public class ReviewController {
         float grade = Float.parseFloat(request.get("grade"));
 
         //user Email 로 계정 조회
+        /*
         User user;
         try {
-            user = userRepository.findByEmail(userEmail).orElseThrow(() -> new IllegalArgumentException(userEmail + "을 찾을 수 없습니다"));
+            //user = userRepository.findByEmail(userEmail).orElseThrow(() -> new IllegalArgumentException(userEmail + "을 찾을 수 없습니다"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.ok().body(Map.of("result", false, "reason", userEmail+"을 찾을 수 없습니다"));
         }
+
+         */
         Review newReview = Review.builder()
                 .content(content)
                 .board(board)
