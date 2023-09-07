@@ -26,17 +26,11 @@ public class UserService {
 	 */
     public void signUp(UserSignUpDto userSignUpDto) throws Exception {
 
-        /*
-        if (userRepository.findByEmail(userSignUpDto.getEmail()).isPresent()) {
-            throw new Exception("이미 존재하는 이메일입니다.");
-        }
-         */
         if (userRepository.findByLoginId(userSignUpDto.getLoginId()).isPresent()) {
             throw new Exception("이미 존재하는 아이디입니다.");
         }
 
         User user = User.builder()
-            //.email(userSignUpDto.getEmail())
             .password(userSignUpDto.getPassword())
             .loginId(userSignUpDto.getLoginId())
             .username(userSignUpDto.getUsername())
@@ -50,18 +44,6 @@ public class UserService {
     public boolean isLoginIdDuplicated(String loginId) {
         return userRepository.findByLoginId(loginId).isPresent();
     }
-
-    /*
-    public boolean isEmailDuplicated(String email) {
-        return userRepository.findByEmail(email).isPresent();
-    }
-     */
-
-    /*
-    public boolean isUsernameDuplicated(String username) {
-        return userRepository.findByUsername(username).isPresent();
-    }
-     */
 
     public User login(String loginId, String password) throws Exception {
         User user = userRepository.findByLoginId(loginId)

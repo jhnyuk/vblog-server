@@ -28,7 +28,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
-    //private String email; // 이메일
     private String loginId; // 아이디
     private String password; // 비밀번호
     private String username; // 이름
@@ -60,7 +59,6 @@ public class User {
     }
 
     public User(String loginId, String password, String username) {
-        //this.email = email;
         this.loginId = loginId;
         this.password = password;
         this.username = username;
