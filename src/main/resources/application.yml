@@ -23,6 +23,10 @@ spring:
         show_sql: true
         format_sql: true
         use_sql_comments: true
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
 
 # Swagger springdoc-ui configuration
 springdoc:
@@ -48,4 +52,4 @@ jwt:
     header: Authorization
   refresh:
     expiration: 1209600000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 14(2주))
-    header: Authorization-refresh
+    header: Refresh

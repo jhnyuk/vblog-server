@@ -1,5 +1,6 @@
 package com.example.vblogserver.domain.user.controller;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.vblogserver.domain.user.dto.ResponseDto;
 import com.example.vblogserver.domain.user.dto.UserSignUpDto;
 import com.example.vblogserver.domain.user.service.UserService;
+import com.example.vblogserver.global.jwt.service.JwtService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +23,18 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserSignUpDto> signUp(@Valid @RequestBody UserSignUpDto userSignUpDto, BindingResult bindingResult) throws Exception {
+    public ResponseEntity<String> signUp(@Valid @RequestBody UserSignUpDto userSignUpDto, BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             throw new IllegalArgumentException(bindingResult.getFieldError().getDefaultMessage());
         }
         userService.signUp(userSignUpDto);
-        return ResponseEntity.status(HttpStatus.OK).body(userSignUpDto);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
+
+        return ResponseEntity.status(HttpStatus.OK).headers(responseHeaders).body("\"회원가입이 완료되었습니다.\"");
     }
 
     @GetMapping("/jwt-test")
@@ -38,22 +44,16 @@ public class UserController {
 
     @GetMapping("/check-id")
     public ResponseEntity<ResponseDto> checkId(@RequestParam String loginId) {
-        boolean isDuplicated = userService.isLoginIdDuplicated(loginId);
         ResponseDto response = new ResponseDto();
-        response.setResult(isDuplicated);
-        response.setMessage(isDuplicated ? "이미 사용 중인 아이디입니다." : "사용 가능한 아이디입니다.");
+        try {
+            boolean isDuplicated = userService.isLoginIdDuplicated(loginId);
+            response.setResult(!isDuplicated);
+            response.setMessage(isDuplicated ? "이미 사용 중인 아이디입니다." : "사용 가능한 아이디입니다.");
+        } catch (IllegalArgumentException e) {
+            response.setResult(false);
+            response.setMessage(e.getMessage());
+        }
+
         return ResponseEntity.ok(response);
     }
-
-    /*
-    @GetMapping("/check-email")
-    public ResponseEntity<ResponseDto> checkEmail(@RequestParam String email) {
-        boolean isDuplicated = userService.isEmailDuplicated(email);
-        ResponseDto response = new ResponseDto();
-        response.setResult(isDuplicated);
-        response.setMessage(isDuplicated ? "이미 사용 중인 이메일입니다." : "사용 가능한 이메일입니다.");
-        return ResponseEntity.ok(response);
-    }
-
-     */
 }
