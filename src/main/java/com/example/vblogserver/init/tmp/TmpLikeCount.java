@@ -15,8 +15,12 @@ public class TmpLikeCount{
 
 
     public void updateBoardLikeCount() {
-        Board board = boardRepository.findById(5L).orElse(null);
-        board.setLikeCount(30);
-        boardRepository.save(board);
+        Board board1 = boardRepository.findById(5L).orElse(null);
+        board1.setLikeCount(30);
+        boardRepository.save(board1);
+
+        Board board2 = boardRepository.findById(294L).orElse(null);
+        board2.setLikeCount(45);
+        boardRepository.save(board2);
     }
 }
