@@ -64,7 +64,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 		// 리프레시 토큰이 요청 헤더에 존재했다면, 사용자가 AccessToken이 만료되어서
 		// RefreshToken까지 보낸 것이므로 리프레시 토큰이 DB의 리프레시 토큰과 일치하는지 판단 후,
 		// 일치한다면 AccessToken을 재발급해준다.
-		if (refreshToken != null) {
+		if (refreshToken != null && !"DELETE".equalsIgnoreCase(request.getMethod()) && !"/logout".equals(request.getRequestURI())) {  // <--- 여기에 조건 추가
 			checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
 			return; // RefreshToken을 보낸 경우에는 AccessToken을 재발급 하고 인증 처리는 하지 않게 하기위해 바로 return으로 필터 진행 막기
 		}
@@ -78,7 +78,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 	}
 
 	/**
-	 *  [리프레시 토큰으로 유저 정보 찾기 & 액세스 토큰/리프레시 토큰 재발급 메소드]
+	 *  [리프레시 토큰으로 유저 정보 찾기 & 액세스 토큰 재발급 메소드]
 	 *  파라미터로 들어온 헤더에서 추출한 리프레시 토큰으로 DB에서 유저를 찾고, 해당 유저가 있다면
 	 *  JwtService.createAccessToken()으로 AccessToken 생성,
 	 *  reIssueRefreshToken()로 리프레시 토큰 재발급 & DB에 리프레시 토큰 업데이트 메소드 호출
@@ -86,11 +86,10 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 	 */
 	public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
 		userRepository.findByRefreshToken(refreshToken)
-			.ifPresent(user -> {
-				String reIssuedRefreshToken = reIssueRefreshToken(user);
-				jwtService.sendAccessAndRefreshToken(response, jwtService.createAccessToken(user.getLoginId()),
-					reIssuedRefreshToken);
-			});
+				.ifPresent(user -> {
+					String newAccessToken = jwtService.createAccessToken(user.getLoginId());
+					jwtService.sendAccessToken(response, newAccessToken);
+				});
 	}
 
 	/**
@@ -108,7 +107,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 	/**
 	 * [액세스 토큰 체크 & 인증 처리 메소드]
 	 * request에서 extractAccessToken()으로 액세스 토큰 추출 후, isTokenValid()로 유효한 토큰인지 검증
-	 * 유효한 토큰이면, 액세스 토큰에서 extractEmail로 Email을 추출한 후 findByEmail()로 해당 이메일을 사용하는 유저 객체 반환
+	 * 유효한 토큰이면, 액세스 토큰에서 extractId로 loginId를 추출한 후 findByLoginId()로 해당 아이디를 사용하는 유저 객체 반환
 	 * 그 유저 객체를 saveAuthentication()으로 인증 처리하여
 	 * 인증 허가 처리된 객체를 SecurityContextHolder에 담기
 	 * 그 후 다음 인증 필터로 진행
