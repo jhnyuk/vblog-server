@@ -1,5 +1,6 @@
 package com.example.vblogserver.domain.user.service;
 
+import com.example.vblogserver.global.jwt.service.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     /*
 	자체 로그인 회원 가입 시 사용하는 회원 가입 API 로직
@@ -67,20 +69,6 @@ public class UserService {
     }
 
     /**
-     * 로그아웃 메서드
-     * @param refreshToken
-     * 사용자의 리프레시 토큰을 찾아서 null로 업데이트하고 저장함으로써, 해당 토큰을 무효화
-     * 사용자가 액세스 토큰을 갱신하려 할 때, 더 이상 유효하지 않은 리프레시 토큰이므로 새로운 액세스 토큰을 얻지 못하게 된다.
-     */
-    public void logout(String refreshToken) {
-        User user = userRepository.findByRefreshToken(refreshToken)
-            .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다."));
-
-        user.updateRefreshToken(null);
-        userRepository.save(user);
-    }
-
-    /**
      * 탈퇴 메서드
      * @param refreshToken
      * 사용자의 리프레시 토큰을 찾지만, 여기서는 해당 사용자를 데이터베이스에서 완전히 삭제
@@ -90,6 +78,14 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다."));
 
         userRepository.delete(user);
+    }
+
+    public User getUserByAccessToken(String accessToken) throws Exception {
+        String loginId = jwtService.extractId(accessToken)
+                .orElseThrow(() -> new Exception("유효하지 않은 액세스 토큰입니다."));
+
+        return userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new Exception("존재하지 않는 유저입니다."));
     }
 
     @PostConstruct
