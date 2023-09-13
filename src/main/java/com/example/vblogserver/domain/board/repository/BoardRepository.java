@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
+    List<Board> findAllBy();
     List<Board> findByCategoryG(CategoryG categoryG);
 
     List<Board> findByCategoryGAndCategoryM(CategoryG categoryG, CategoryM categoryM);
