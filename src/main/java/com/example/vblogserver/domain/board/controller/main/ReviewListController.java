@@ -19,7 +19,7 @@ public class ReviewListController {
         this.boardRepository = boardRepository;
         this.dtoConvertServcie = dtoConvertServcie;
     }
-
+    //vlog 리뷰 많은 순으로 조회
     @GetMapping("/vlog/reviewlist")
     public List<MainBoardDTO> getVlogLikeList(){
         CategoryG categoryG = new CategoryG();
@@ -27,7 +27,7 @@ public class ReviewListController {
         List<Board> boards = boardRepository.findByCategoryGOrderByReviewCountDesc(categoryG);
         return dtoConvertServcie.BoardToMainBoard(boards);
     }
-
+    //blog 리뷰 많은 순으로 조회
     @GetMapping("/blog/reviewlist")
     public List<MainBoardDTO> getBlogLikeList(){
         CategoryG categoryG = new CategoryG();

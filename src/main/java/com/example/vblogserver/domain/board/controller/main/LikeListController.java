@@ -21,6 +21,7 @@ public class LikeListController {
         this.dtoConvertServcie = dtoConvertServcie;
     }
 
+    //vlog 좋아요 순으로 조회
     @GetMapping("/vlog/likelist")
     public List<MainBoardDTO> getVlogLikeList(){
         CategoryG categoryG = new CategoryG();
@@ -28,7 +29,7 @@ public class LikeListController {
         List<Board> boards = boardRepository.findByCategoryGOrderByLikeCountDesc(categoryG);
         return dtoConvertServcie.BoardToMainBoard(boards);
     }
-
+    //blog 좋아요 순으로 조회
     @GetMapping("/blog/likelist")
     public List<MainBoardDTO> getBlogLikeList(){
         CategoryG categoryG = new CategoryG();

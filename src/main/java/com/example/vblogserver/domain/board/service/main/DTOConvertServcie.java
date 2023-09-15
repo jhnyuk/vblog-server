@@ -10,8 +10,9 @@ import java.util.stream.Collectors;
 @Service
 public class DTOConvertServcie {
     public List<MainBoardDTO> BoardToMainBoard(List<Board> boards){
-
+        //조회 건수 60으로 제한
         int limit = 60;
+        //Board DTO 를 MainBoardDTO 로 형변환
         List<MainBoardDTO> clientDataDTOs = boards.stream()
                 .limit(limit)
                 .map(this::convertToClientDataDTO)
