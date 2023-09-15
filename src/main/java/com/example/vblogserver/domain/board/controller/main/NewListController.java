@@ -19,7 +19,7 @@ public class NewListController {
         this.boardRepository = boardRepository;
         this.dtoConvertServcie = dtoConvertServcie;
     }
-
+    //vlog 최신순으로 조회
     @GetMapping("/vlog/newlist")
     public List<MainBoardDTO> getVlogNewList(){
         CategoryG categoryG = new CategoryG();
@@ -27,7 +27,7 @@ public class NewListController {
         List<Board> boards = boardRepository.findByCategoryGOrderByCreatedDateDesc(categoryG);
         return dtoConvertServcie.BoardToMainBoard(boards);
     }
-
+    //blog 최신순으로 조회
     @GetMapping("/blog/newlist")
     public List<MainBoardDTO> getBlogNewList(){
         CategoryG categoryG = new CategoryG();
