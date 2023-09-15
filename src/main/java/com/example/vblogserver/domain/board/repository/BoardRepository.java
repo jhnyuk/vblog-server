@@ -17,5 +17,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     //베너 조회 용. 좋아요가 가장 높은 데이터 검색
     Optional<Board> findTopByCategoryGOrderByLikeCountDesc(CategoryG categoryG);
+    //메인페이지 조회용. 좋아요 순으로 데이터 검색
+    List<Board> findByCategoryGOrderByLikeCountDesc(CategoryG categoryG);
+    //메인페이지 조회용. 최신순으로 데이터 검색
+    List<Board> findByCategoryGOrderByCreatedDateDesc(CategoryG categoryG);
+    //메인페이지 조회용. 리뷰가 가장 많은 순으로 검색
+    List<Board> findByCategoryGOrderByReviewCountDesc(CategoryG categoryG);
 
 }
