@@ -126,11 +126,14 @@ public class BoardComponent implements CommandLineRunner {
                         429 Too Many Requests: "{"errorMessage":"Rate limit exceeded. (속도 제한을 초과했습니다.)","errorCode":"012"}"
                         오류가 발생하여 반복 실행 시 시간차를 두고 반복 실행
                      */
+                    /*
                     try {
                         Thread.sleep(300);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
+
+                     */
                 }
 
             }

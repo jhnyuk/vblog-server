@@ -46,6 +46,7 @@ public class Board {
     //게시글 링크
     private String link;
     //내용
+    @Column(length = 3000)
     private String description;
     //썸네일 이미지 링크
     @Column(length = 3000)
