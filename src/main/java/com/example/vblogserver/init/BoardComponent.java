@@ -5,11 +5,12 @@ import com.example.vblogserver.domain.board.repository.BoardRepository;
 import com.example.vblogserver.domain.category.entity.CategoryG;
 import com.example.vblogserver.domain.category.entity.CategoryM;
 import com.example.vblogserver.domain.category.entity.CategoryS;
+import com.example.vblogserver.init.naver.NaverImgSaveService;
 import com.example.vblogserver.init.naver.NaverImgScrapService;
 import com.example.vblogserver.init.naver.NaverService;
 import com.example.vblogserver.init.tmp.TmpBookMark;
-import com.example.vblogserver.init.tmp.TmpGrade;
 import com.example.vblogserver.init.tmp.TmpDisAndLikeCount;
+import com.example.vblogserver.init.tmp.TmpGrade;
 import com.example.vblogserver.init.tmp.TmpReview;
 import com.example.vblogserver.init.youtube.YoutubeService;
 import org.json.JSONArray;
@@ -32,9 +33,10 @@ public class BoardComponent implements CommandLineRunner {
     private final TmpGrade tmpGrade;
     private final TmpBookMark tmpBookMark;
     private final NaverImgScrapService naverImgScrapService;
+    private final NaverImgSaveService naverImgSaveService;
 
     @Autowired
-    public BoardComponent(BoardRepository boardRepository, YoutubeService youtubeService, NaverService naverService, TmpDisAndLikeCount tmpLikeCount, TmpReview tmpReview, TmpGrade tmpGrade, TmpBookMark tmpBookMark, NaverImgScrapService naverImgScrapService){
+    public BoardComponent(BoardRepository boardRepository, YoutubeService youtubeService, NaverService naverService, TmpDisAndLikeCount tmpLikeCount, TmpReview tmpReview, TmpGrade tmpGrade, TmpBookMark tmpBookMark, NaverImgScrapService naverImgScrapService, NaverImgSaveService naverImgSaveService){
         this.boardRepository = boardRepository;
         this.youtubeService = youtubeService;
         this.naverService = naverService;
@@ -43,6 +45,7 @@ public class BoardComponent implements CommandLineRunner {
         this.tmpGrade = tmpGrade;
         this.tmpBookMark = tmpBookMark;
         this.naverImgScrapService = naverImgScrapService;
+        this.naverImgSaveService = naverImgSaveService;
     }
 
     @Override
@@ -83,7 +86,7 @@ public class BoardComponent implements CommandLineRunner {
 
                     //vlog
                     if (z==1) response = youtubeService.getYoutubeData(categoryS_name[y], maxResults);
-                    //blog
+                        //blog
                     else if (z==2) response = naverService.getNaverData(categoryS_name[y], maxResults);
                     System.out.println(response);
                     JSONArray items = response.getJSONArray("items");
@@ -103,7 +106,7 @@ public class BoardComponent implements CommandLineRunner {
                         String thumbnailsLink = "";
                         // blog 일 경우 API를 이용하여 썸네일 이미지 url 을 받아옴
                         if(z==1) board.setThumbnails(json.optString("thumbnails"));
-                        // vlog 일 경우 이미지 크롤링하여 이미지 url을 받아옴
+                            // vlog 일 경우 이미지 크롤링하여 이미지 url을 받아옴
                         else if(z==2) {
                             try {
                                 thumbnailsLink = naverImgScrapService.scrapeFirstImage(json.optString("link"));
@@ -121,6 +124,11 @@ public class BoardComponent implements CommandLineRunner {
                         boards.add(board);
                     }
                     boardRepository.saveAll(boards);
+
+
+
+
+
                     /*
                         데이터 조회 시
                         429 Too Many Requests: "{"errorMessage":"Rate limit exceeded. (속도 제한을 초과했습니다.)","errorCode":"012"}"
@@ -132,13 +140,33 @@ public class BoardComponent implements CommandLineRunner {
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
-
-                     */
+                    */
                 }
-
             }
-
         }
+        /*
+                     이미지 url 을 호출하여 파일로 저장하는 로직 추가.
+                     네이버 블로그의 경우 스크랩 차단 기능이 설정되어 있어 프론트에서 호출하면 403 에러가 발생하며 차단됨.
+                     ∴ 백엔드에서 파일로 저장하여 백엔드에서 이미지를 전달해주도록 변경.
+                     게시글의 ID 값을 파일명으로 저장하기 위해 ID가 할당되는 시점인 saveAll 이 실행된 이후로 적용
+                     */
+
+        System.out.println("진입");
+        CategoryG categoryG = new CategoryG();
+        categoryG.setId(2L);
+        List<Board> boards = boardRepository.findByCategoryG(categoryG);
+        List<Board> boardsCopy = new ArrayList<>(boards);
+        for (Board board : boardsCopy) {
+            // 게시글 ID 조회
+            Long id = board.getId();
+            //naverImgSaveService.scrapeFirstImage2(board.getThumbnails(), id);
+            if(board.getThumbnails().equals("")) board.setThumbnails("");
+            else board.setThumbnails("http://ec2-3-39-126-215.ap-northeast-2.compute.amazonaws.com/img/"+id+".png");
+
+            //board.setThumbnails(thumbnailsLink);
+            boards.add(board);
+        }
+        boardRepository.saveAll(boards);
 
         // 테스트용 데이터 inset : id가 5인 게시글의 좋아요 30 으로 설정
         tmpLikeCount.updateBoardDisAndLikeCount();
