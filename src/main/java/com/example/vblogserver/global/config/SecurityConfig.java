@@ -76,7 +76,7 @@ public class SecurityConfig {
 		// 토큰 재발급 URL은 인증 없이 접근 가능하도록 설정. 나머지 API URL은 인증 필요
 		http.authorizeRequests((authReq)
 			-> authReq.requestMatchers( "/","/login","/signup", "/logout", "/check-email", "/check-id", "/login/**", "/token/**",
-						"/oauth2/code/**","/img/**", "/css/**", "/js/**", "/favicon.ico", "/vblog-api.html", "/swagger-ui/**", "/api-docs/**").permitAll()
+						"/login/oauth2/code/**","/oauth2/code/**","/img/**", "/css/**", "/js/**", "/favicon.ico", "/vblog-api.html", "/swagger-ui/**", "/api-docs/**").permitAll()
 				.requestMatchers("/api/**").hasRole(Role.USER.name())
 			.anyRequest().permitAll()); // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
 
@@ -164,10 +164,10 @@ public class SecurityConfig {
 			Arrays.asList("http://localhost:3000", "http://dmu-vblog.s3-website.ap-northeast-2.amazonaws.com"));
 		configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 		configuration.setAllowCredentials(true);
-		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Refresh", "Cache-Control", "Content-Type"));
+		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Refresh", "Cache-Control", "Content-Type", "Location"));
 
 		/* 응답 헤더 설정 추가*/
-		configuration.setExposedHeaders(Arrays.asList("Authorization", "Refresh"));
+		configuration.setExposedHeaders(Arrays.asList("Authorization", "Refresh", "Location"));
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
