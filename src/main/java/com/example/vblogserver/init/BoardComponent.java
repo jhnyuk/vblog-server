@@ -88,7 +88,7 @@ public class BoardComponent implements CommandLineRunner {
                     if (z==1) response = youtubeService.getYoutubeData(categoryS_name[y], maxResults);
                         //blog
                     else if (z==2) response = naverService.getNaverData(categoryS_name[y], maxResults);
-                    System.out.println(response);
+                    //System.out.println(response);
                     JSONArray items = response.getJSONArray("items");
 
                     List<Board> boards = new ArrayList<>();
@@ -151,7 +151,7 @@ public class BoardComponent implements CommandLineRunner {
                      게시글의 ID 값을 파일명으로 저장하기 위해 ID가 할당되는 시점인 saveAll 이 실행된 이후로 적용
                      */
 
-        System.out.println("진입");
+        //System.out.println("진입");
         CategoryG categoryG = new CategoryG();
         categoryG.setId(2L);
         List<Board> boards = boardRepository.findByCategoryG(categoryG);
