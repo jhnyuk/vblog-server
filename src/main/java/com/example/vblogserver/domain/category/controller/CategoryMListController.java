@@ -47,6 +47,7 @@ public class CategoryMListController {
         return getCategoryData(categoryName, 2L, "likelist");
     }
 
+
     // Board 를 메인 페이지에 내려주는 DTO(MainBoardDTO)와 동일한 형태로 변환하기
     private List<MainBoardDTO> getCategoryData(String categoryName, Long categoryGId, String sortInfo) {
         CategoryG categoryG = new CategoryG();
@@ -57,9 +58,9 @@ public class CategoryMListController {
         List<Board> boardsWithCategoryGAndM;
 
         //최신순(newlist)일 경우 최신순 정렬
-        if(sortInfo.equals("newlist")) boardsWithCategoryGAndM = boardRepository.findByCategoryGAndCategoryMOrderByLikeCountDesc(categoryG, categoryM);
+        if(sortInfo.equals("newlist")) boardsWithCategoryGAndM = boardRepository.findByCategoryGAndCategoryMOrderByCreatedDateDesc(categoryG, categoryM);
         //좋아요순(likelist)일 경우 최신순 정렬
-        else boardsWithCategoryGAndM = boardRepository.findByCategoryGAndCategoryMOrderByCreatedDateDesc(categoryG, categoryM);
+        else boardsWithCategoryGAndM = boardRepository.findByCategoryGAndCategoryMOrderByLikeCountDesc(categoryG, categoryM);
 
         List<MainBoardDTO> mainBoardDTOList = new ArrayList<>();
         for (Board board : boardsWithCategoryGAndM) {

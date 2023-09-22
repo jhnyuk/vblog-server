@@ -3,6 +3,7 @@ package com.example.vblogserver.domain.bookmark.entity;
 import com.example.vblogserver.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,6 +26,7 @@ public class Bookmark {
     //찜한 유저
     private User user;
 
+    @Builder
     public Bookmark(Boolean bookmark, Long contentId, User user) {
         this.bookmark = bookmark;
         this.contentId = contentId;
