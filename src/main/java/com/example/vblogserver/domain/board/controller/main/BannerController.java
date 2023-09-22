@@ -1,4 +1,4 @@
-package com.example.vblogserver.domain.board.controller;
+package com.example.vblogserver.domain.board.controller.main;
 
 import com.example.vblogserver.domain.board.dto.BannerDTO;
 import com.example.vblogserver.domain.board.entity.Board;

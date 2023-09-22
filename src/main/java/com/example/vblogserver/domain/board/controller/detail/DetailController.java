@@ -1,12 +1,8 @@
-package com.example.vblogserver.domain.board.controller;
+package com.example.vblogserver.domain.board.controller.detail;
 
 import com.example.vblogserver.domain.board.dto.BoardDetailDTO;
-import com.example.vblogserver.domain.board.dto.MainBoardDTO;
 import com.example.vblogserver.domain.board.entity.Board;
 import com.example.vblogserver.domain.board.repository.BoardRepository;
-import com.example.vblogserver.domain.category.entity.CategoryG;
-import com.example.vblogserver.domain.review.dto.ReviewDTO;
-import com.example.vblogserver.domain.review.entity.Review;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +12,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @RestController
 public class DetailController {
@@ -26,9 +21,6 @@ public class DetailController {
         this.boardRepository = boardRepository;
     }
 
-    //회원이 조회할 경우
-
-    //비회원이 조회할 경우
     @GetMapping("/board/{contentId}")
     public ResponseEntity<BoardDetailDTO> readDetailBoard(@PathVariable Long contentId) {
         // boardId 게시글이 없을 경우
