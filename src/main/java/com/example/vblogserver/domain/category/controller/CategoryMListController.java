@@ -1,4 +1,4 @@
-package com.example.vblogserver.domain.board.controller;
+package com.example.vblogserver.domain.category.controller;
 
 import com.example.vblogserver.domain.board.dto.MainBoardDTO;
 import com.example.vblogserver.domain.board.entity.Board;
@@ -21,25 +21,45 @@ public class CategoryMListController {
     public CategoryMListController(BoardRepository boardRepository) {
         this.boardRepository = boardRepository;
     }
-    //vlog 카테고리별 조회
+    //vlog 카테고리별 최신순으로 조회
     //categoryName 은 CategoryM에 속하는 카테고리 Name이 영문으로 들어옴.
     //categoryName : "Travel"(여행), "Game"(게임), "Health"(건강), "Restaurant"(맛집), "Broadcasting"(방송), "Beauty"(뷰티)
-    @GetMapping("/vlog/category/{categoryName}")
-    public List<MainBoardDTO> getVlogCategoryData(@PathVariable String categoryName) {
-        return getCategoryData(categoryName, 1L);
+    @GetMapping("/vlog/category/newlist/{categoryName}")
+    public List<MainBoardDTO> getVlogCategoryNewListData(@PathVariable String categoryName) {
+        return getCategoryData(categoryName, 1L, "newlist");
     }
 
-    @GetMapping("/blog/category/{categoryName}")
-    public List<MainBoardDTO> getBlogCategoryData(@PathVariable String categoryName) {
-        return getCategoryData(categoryName, 2L);
+    //blog 카테고리별 최신순으로 조회
+    @GetMapping("/blog/category/newlist/{categoryName}")
+    public List<MainBoardDTO> getBlogCategoryNewListData(@PathVariable String categoryName) {
+        return getCategoryData(categoryName, 2L, "newlist");
     }
 
-    private List<MainBoardDTO> getCategoryData(String categoryName, Long categoryGId) {
+    //vlog 카테고리별 좋아요순으로 조회
+    @GetMapping("/vlog/category/likelist/{categoryName}")
+    public List<MainBoardDTO> getVlogCategoryLikeListData(@PathVariable String categoryName) {
+        return getCategoryData(categoryName, 1L, "likelist");
+    }
+
+    //blog 카테고리별 좋아요순으로 조회
+    @GetMapping("/blog/category/likelist/{categoryName}")
+    public List<MainBoardDTO> getBlogCategoryLikeListData(@PathVariable String categoryName) {
+        return getCategoryData(categoryName, 2L, "likelist");
+    }
+
+    // Board 를 메인 페이지에 내려주는 DTO(MainBoardDTO)와 동일한 형태로 변환하기
+    private List<MainBoardDTO> getCategoryData(String categoryName, Long categoryGId, String sortInfo) {
         CategoryG categoryG = new CategoryG();
         categoryG.setId(categoryGId);
 
         CategoryM categoryM = getCategoryMByName(categoryName);
-        List<Board> boardsWithCategoryGAndM = boardRepository.findByCategoryGAndCategoryM(categoryG, categoryM);
+
+        List<Board> boardsWithCategoryGAndM;
+
+        //최신순(newlist)일 경우 최신순 정렬
+        if(sortInfo.equals("newlist")) boardsWithCategoryGAndM = boardRepository.findByCategoryGAndCategoryMOrderByLikeCountDesc(categoryG, categoryM);
+        //좋아요순(likelist)일 경우 최신순 정렬
+        else boardsWithCategoryGAndM = boardRepository.findByCategoryGAndCategoryMOrderByCreatedDateDesc(categoryG, categoryM);
 
         List<MainBoardDTO> mainBoardDTOList = new ArrayList<>();
         for (Board board : boardsWithCategoryGAndM) {
@@ -59,6 +79,8 @@ public class CategoryMListController {
 
         return mainBoardDTOList;
     }
+
+    // 요청받은 카테고리에 따라 카테고리 ID 추출
     private CategoryM getCategoryMByName(String categoryName) {
         System.out.println(categoryName);
         CategoryM categoryM = new CategoryM();
