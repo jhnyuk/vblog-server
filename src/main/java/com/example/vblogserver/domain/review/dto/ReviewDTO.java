@@ -1,5 +1,6 @@
 package com.example.vblogserver.domain.review.dto;
 
+import com.example.vblogserver.domain.board.entity.Board;
 import com.example.vblogserver.domain.user.entity.User;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,8 @@ public class ReviewDTO {
     private float grade;
     // 블로그인지 브이로그인지 구분
     private String category;
+    // 게시글 ID
+    private Long boardId;
 
     public void setGrade(float grade) {
         this.grade = grade;
@@ -60,5 +63,10 @@ public class ReviewDTO {
     }
 
     public void setCategory(String category) {this.category = category; }
+
     public String getCategory() {return category;}
+
+    public void setBoardId(Long boardId) {this.boardId = boardId; }
+    public Long getBoardId() { return boardId; }
+
 }

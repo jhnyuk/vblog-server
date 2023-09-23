@@ -83,6 +83,7 @@ public class MypageController {
 				reviewDTO.setId(review.getId());
 				reviewDTO.setContent(review.getContent());
 				reviewDTO.setCreatedDate(review.getCreatedDate());
+				reviewDTO.setBoardId(review.getBoard().getId());  // 게시글 ID 설정
 
 				// Category 정보 설정
 				if (review.getBoard().getCategoryG() != null) {
