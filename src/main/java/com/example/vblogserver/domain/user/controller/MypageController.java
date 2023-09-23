@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,89 +37,37 @@ public class MypageController {
 	private final ReviewRepository reviewRepository;
 	private final ReviewService reviewService;
 
-	//@GetMapping("/scrap")
+	// TODO: @GetMapping("/scrap")
 
-	@GetMapping("/blog/review/{boardId}")
-	public ResponseEntity<Map<String, Object>> myReviews(HttpServletRequest request, @PathVariable Long reviewId) {
+	@GetMapping("/blog/reviews")
+	public ResponseEntity<List<ReviewDTO>> getUserBlogReviews(HttpServletRequest request) {
+		return getUserReviewsByCategory(request, "blog");
+	}
+
+	@GetMapping("/vlog/reviews")
+	public ResponseEntity<List<ReviewDTO>> getUserVlogReviews(HttpServletRequest request) {
+		return getUserReviewsByCategory(request, "vlog");
+	}
+
+	private ResponseEntity<List<ReviewDTO>> getUserReviewsByCategory(HttpServletRequest request, String category) {
+		// 액세스 토큰 추출
 		Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
-		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
 
-		// 액세스 토큰이 존재하고 유효하다면
-		if (accessTokenOpt.isPresent() && jwtService.isTokenValid(accessTokenOpt.get())) {
-			// 리뷰 ID로 리뷰 조회
-			Review review = reviewRepository.findById(reviewId).orElse(null);
-
-			return ResponseEntity.ok().body(Map.of("result", true, "reason", "조회 성공"));
-		} else {
-			return ResponseEntity.ok().body(Map.of("result", true, "reason", "유효하지 않은 액세스 토큰입니다."));
-		}
-	}
-
-	// 리뷰 조회
-	@GetMapping("/{boardId}")
-	public ResponseEntity<List<ReviewDTO>> readReview(@PathVariable Long boardId) {
-		List<Review> reviews = reviewService.getReviewByBoardId(boardId);
-
-		if (reviews.isEmpty()) {
-			return ResponseEntity.notFound().build();
+		// 액세스 토큰이 존재하지 않거나 유효하지 않다면 에러 응답 반환
+		if (accessTokenOpt.isEmpty() || !jwtService.isTokenValid(accessTokenOpt.get())) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 		}
 
-		List<ReviewDTO> reviewDTOs = reviews.stream()
-			.map(review -> {
-				ReviewDTO reviewDTO = new ReviewDTO();
-				reviewDTO.setId(review.getId());
-				reviewDTO.setContent(review.getContent());
-				reviewDTO.setCreatedDate(review.getCreatedDate());
-				reviewDTO.setUserId(review.getUser().getLoginId());
-				reviewDTO.setGrade(review.getGrade());
-				return reviewDTO;
-			})
-			.collect(Collectors.toList());
+		// 액세스 토큰에서 로그인 아이디 추출
+		Optional<String> loginIdOpt = jwtService.extractId(accessTokenOpt.get());
 
-		return ResponseEntity.ok(reviewDTOs);
-
-	}
-
-	@GetMapping("/{userId}/reviews")
-	public ResponseEntity<List<ReviewDTO>> getUserReviews(@PathVariable Long userId) {
-		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-
-		List<Review> reviews = user.getReviews();
-
-		if (reviews.isEmpty()) {
-			return ResponseEntity.notFound().build();
+		// 로그인 아이디가 존재하지 않으면 에러 응답 반환
+		if (loginIdOpt.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 		}
 
-		List<ReviewDTO> reviewDTOs = reviews.stream()
-			.map(review -> {
-				ReviewDTO reviewDTO = new ReviewDTO();
-				reviewDTO.setId(review.getId());
-				reviewDTO.setContent(review.getContent());
-				reviewDTO.setCreatedDate(review.getCreatedDate());
-				// Board 정보도 필요하다면 추가로 설정해줄 수 있습니다.
-				// reviewDTO.setBoardId(review.getBoard().getId());
-				reviewDTO.setGrade(review.getGrade());
-
-				return reviewDTO;
-			})
-			.collect(Collectors.toList());
-
-		return ResponseEntity.ok(reviewDTOs);
-	}
-
-	@GetMapping("/{userId}/reviews/blog")
-	public ResponseEntity<List<ReviewDTO>> getUserBlogReviews(@PathVariable Long userId) {
-		return getUserReviewsByCategory(userId, "blog");
-	}
-
-	@GetMapping("/{userId}/reviews/vlog")
-	public ResponseEntity<List<ReviewDTO>> getUserVlogReviews(@PathVariable Long userId) {
-		return getUserReviewsByCategory(userId, "vlog");
-	}
-
-	private ResponseEntity<List<ReviewDTO>> getUserReviewsByCategory(Long userId, String category) {
-		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+		// 로그인 아이디로 사용자 조회
+		User user = userRepository.findByLoginId(loginIdOpt.get()).orElseThrow(() -> new RuntimeException("User not found"));
 
 		List<Review> reviews = user.getReviews().stream()
 			.filter(review -> review.getBoard().getCategoryG().getCategoryName().equalsIgnoreCase(category))
@@ -134,9 +83,6 @@ public class MypageController {
 				reviewDTO.setId(review.getId());
 				reviewDTO.setContent(review.getContent());
 				reviewDTO.setCreatedDate(review.getCreatedDate());
-
-				// Board 정보도 필요하다면 추가로 설정해줄 수 있습니다.
-				// 예: reviewDTO.setBoardId(review.getBoard().getId());
 
 				// Category 정보 설정
 				if (review.getBoard().getCategoryG() != null) {
