@@ -4,6 +4,7 @@ import com.example.vblogserver.domain.board.entity.Board;
 import com.example.vblogserver.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,9 +33,11 @@ public class Bookmark {
     @JoinColumn(name = "USER_ID")
     private User user;
 
+    @Builder
     public Bookmark(Boolean bookmark, Board board, User user) {
         this.bookmark = bookmark;
         this.board = board;
         this.user = user;
     }
+
 }

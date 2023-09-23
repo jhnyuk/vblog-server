@@ -53,7 +53,7 @@ public class ReviewController {
         List<ReviewDTO> reviewDTOs = reviews.stream()
                 .map(review -> {
                     ReviewDTO reviewDTO = new ReviewDTO();
-                    reviewDTO.setId(review.getId());
+                    reviewDTO.setReviewId(review.getId());
                     reviewDTO.setContent(review.getContent());
                     reviewDTO.setCreatedDate(review.getCreatedDate());
                     reviewDTO.setUserId(review.getUser().getLoginId());
@@ -66,6 +66,7 @@ public class ReviewController {
 
     }
 
+    //리뷰 작성
     @PostMapping("/{boardId}")
     public ResponseEntity<Map<String, Object>> createReview(HttpServletRequest request, @PathVariable Long boardId,  @RequestBody Map<String, String> createReview) {
         Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
@@ -109,7 +110,7 @@ public class ReviewController {
                 return ResponseEntity.ok().body(Map.of("result", false, "reason", "저장 실패"));
             }
         } else {
-            return ResponseEntity.ok().body(Map.of("result", true, "reason", "유효하지 않은 액세스 토큰입니다."));
+            return ResponseEntity.ok().body(Map.of("result", false, "reason", "유효하지 않은 액세스 토큰입니다."));
         }
     }
 
@@ -144,7 +145,7 @@ public class ReviewController {
                 return ResponseEntity.ok().body(Map.of("result", false, "reason", "수정 실패"));
             }
         } else {
-            return ResponseEntity.ok().body(Map.of("result", true, "reason", "유효하지 않은 액세스 토큰입니다."));
+            return ResponseEntity.ok().body(Map.of("result", false, "reason", "유효하지 않은 액세스 토큰입니다."));
         }
     }
 
@@ -170,7 +171,7 @@ public class ReviewController {
             reviewRepository.delete(review);
             return ResponseEntity.ok().body(Map.of("result", true, "reason", "삭제 성공"));
         } else {
-            return ResponseEntity.ok().body(Map.of("result", true, "reason", "유효하지 않은 액세스 토큰입니다."));
+            return ResponseEntity.ok().body(Map.of("result", false, "reason", "유효하지 않은 액세스 토큰입니다."));
         }
     }
 }

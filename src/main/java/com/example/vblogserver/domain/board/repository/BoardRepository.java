@@ -13,8 +13,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findAllBy();
     List<Board> findByCategoryG(CategoryG categoryG);
 
-    List<Board> findByCategoryGAndCategoryM(CategoryG categoryG, CategoryM categoryM);
-
     //베너 조회 용. 좋아요가 가장 높은 데이터 검색
     Optional<Board> findTopByCategoryGOrderByLikeCountDesc(CategoryG categoryG);
     //메인페이지 조회용. 좋아요 순으로 데이터 검색
@@ -23,5 +21,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findByCategoryGOrderByCreatedDateDesc(CategoryG categoryG);
     //메인페이지 조회용. 리뷰가 가장 많은 순으로 검색
     List<Board> findByCategoryGOrderByReviewCountDesc(CategoryG categoryG);
+    //카테고리 조회용. 좋아요 순으로 데이터 검색
+    List<Board> findByCategoryGAndCategoryMOrderByLikeCountDesc(CategoryG categoryG, CategoryM categoryM);
+    //카테고리 조회용. 최신 순으로 데이터 검색
+    List<Board> findByCategoryGAndCategoryMOrderByCreatedDateDesc(CategoryG categoryG, CategoryM categoryM);
 
 }

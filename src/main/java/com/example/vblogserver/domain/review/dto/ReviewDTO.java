@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 public class ReviewDTO {
     //리뷰 ID
-    private Long id;
+    private Long reviewId;
     //리뷰 내용
     private String content;
     //리뷰 작성 일자
@@ -34,12 +34,12 @@ public class ReviewDTO {
         this.userId = userId;
     }
 
-    public Long getId() {
-        return id;
+    public Long getReviewId() {
+        return reviewId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setReviewId(Long reviewId) {
+        this.reviewId = reviewId;
     }
 
     public String getContent() {
