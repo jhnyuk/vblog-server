@@ -1,23 +1,26 @@
 package com.example.vblogserver.domain.user.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.example.vblogserver.domain.bookmark.entity.Bookmark;
+import com.example.vblogserver.domain.review.entity.Review;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "USERS")
 @AllArgsConstructor
@@ -64,4 +67,12 @@ public class User {
         this.username = username;
         this.createDate = LocalDateTime.now();
     }
+
+    // 내가 쓴 리뷰
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Review> reviews;
+
+    // 스크랩
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Bookmark> bookmarks;
 }

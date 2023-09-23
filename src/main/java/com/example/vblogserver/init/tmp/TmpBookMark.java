@@ -41,7 +41,7 @@ public class TmpBookMark {
                 return ;
             }
 
-            Bookmark saveBookmark = new Bookmark(bookmark, board.getId(), user);
+            Bookmark saveBookmark = new Bookmark(bookmark, board, user);
             bookmarkRepository.save(saveBookmark);
         }
         System.out.println("찜 저장 성공");
