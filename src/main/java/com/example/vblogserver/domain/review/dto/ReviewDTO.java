@@ -16,6 +16,8 @@ public class ReviewDTO {
     private String userId;
     //평점
     private float grade;
+    // 블로그인지 브이로그인지 구분
+    private String category;
 
     public void setGrade(float grade) {
         this.grade = grade;
@@ -57,5 +59,6 @@ public class ReviewDTO {
         this.createdDate = createdDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
     }
 
-
+    public void setCategory(String category) {this.category = category; }
+    public String getCategory() {return category;}
 }

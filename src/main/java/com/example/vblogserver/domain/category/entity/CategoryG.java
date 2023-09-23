@@ -23,4 +23,5 @@ public class CategoryG {
     public void setId(Long id) {
         this.id = id;
     }
+    public String getCategoryName() { return categoryName; }
 }

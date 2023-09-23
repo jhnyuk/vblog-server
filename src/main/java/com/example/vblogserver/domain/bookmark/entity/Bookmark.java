@@ -1,5 +1,6 @@
 package com.example.vblogserver.domain.bookmark.entity;
 
+import com.example.vblogserver.domain.board.entity.Board;
 import com.example.vblogserver.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,16 +19,22 @@ public class Bookmark {
     private Long id;
     //찜 여부 (true, false)
     private Boolean bookmark;
-    //게시글 ID
+
     private Long contentId;
-    @ManyToOne
-    @JoinColumn(name = "USER_ID")
+
+    // 게시글 ID - 수정
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="board_id")
+    private Board board;
+
     //찜한 유저
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID")
     private User user;
 
-    public Bookmark(Boolean bookmark, Long contentId, User user) {
+    public Bookmark(Boolean bookmark, Board board, User user) {
         this.bookmark = bookmark;
-        this.contentId = contentId;
+        this.board = board;
         this.user = user;
     }
 }
