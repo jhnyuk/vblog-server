@@ -67,7 +67,7 @@ public class BookmarkController {
 
                 Bookmark newBookmark = Bookmark.builder()
                         .bookmark(bookmarkOnOff)
-                        .contentId(contentId)
+                        .board(board)
                         .user(user)
                         .build();
                 Bookmark saveBookMark = bookmarkRepository.save(newBookmark);
