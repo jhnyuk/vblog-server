@@ -79,7 +79,7 @@ public class MypageController {
 		List<ReviewDTO> reviewDTOs = reviews.stream()
 			.map(review -> {
 				ReviewDTO reviewDTO = new ReviewDTO();
-				reviewDTO.setId(review.getId());
+				reviewDTO.setReviewId(review.getId());
 				reviewDTO.setContent(review.getContent());
 				reviewDTO.setCreatedDate(review.getCreatedDate());
 				reviewDTO.setBoardId(review.getBoard().getId());  // 게시글 ID 설정
