@@ -26,18 +26,14 @@ public class Click {
     @JoinColumn(name = "boardID")
     private Board board;
 
-    // 게시글 click 여부
-    private boolean clickInfo;
-
     // 게시글을 Click 한 사용자 정보
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userNo")
     private User user;
 
     @Builder
-    public Click(Board board, boolean clickInfo, User user) {
+    public Click(Board board, User user) {
         this.board = board;
-        this.clickInfo = clickInfo;
         this.user = user;
     }
 
@@ -57,11 +53,4 @@ public class Click {
         this.board = board;
     }
 
-    public boolean isClickInfo() {
-        return clickInfo;
-    }
-
-    public void setClickInfo(boolean clickInfo) {
-        this.clickInfo = clickInfo;
-    }
 }
