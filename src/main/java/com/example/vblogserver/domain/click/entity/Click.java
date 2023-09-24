@@ -18,7 +18,7 @@ public class Click {
     // Click ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "clickId", updatable = false)
     private Long clickId;
 
     // Click 한 게시글 ID
