@@ -8,10 +8,7 @@ import com.example.vblogserver.domain.category.entity.CategoryS;
 import com.example.vblogserver.init.naver.NaverImgSaveService;
 import com.example.vblogserver.init.naver.NaverImgScrapService;
 import com.example.vblogserver.init.naver.NaverService;
-import com.example.vblogserver.init.tmp.TmpBookMark;
-import com.example.vblogserver.init.tmp.TmpDisAndLikeCount;
-import com.example.vblogserver.init.tmp.TmpGrade;
-import com.example.vblogserver.init.tmp.TmpReview;
+import com.example.vblogserver.init.tmp.*;
 import com.example.vblogserver.init.youtube.YoutubeService;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,9 +31,10 @@ public class BoardComponent implements CommandLineRunner {
     private final TmpBookMark tmpBookMark;
     private final NaverImgScrapService naverImgScrapService;
     private final NaverImgSaveService naverImgSaveService;
+    private final TmpClick tmpClick;
 
     @Autowired
-    public BoardComponent(BoardRepository boardRepository, YoutubeService youtubeService, NaverService naverService, TmpDisAndLikeCount tmpLikeCount, TmpReview tmpReview, TmpGrade tmpGrade, TmpBookMark tmpBookMark, NaverImgScrapService naverImgScrapService, NaverImgSaveService naverImgSaveService){
+    public BoardComponent(BoardRepository boardRepository, YoutubeService youtubeService, NaverService naverService, TmpDisAndLikeCount tmpLikeCount, TmpReview tmpReview, TmpGrade tmpGrade, TmpBookMark tmpBookMark, NaverImgScrapService naverImgScrapService, NaverImgSaveService naverImgSaveService, TmpClick tmpClick){
         this.boardRepository = boardRepository;
         this.youtubeService = youtubeService;
         this.naverService = naverService;
@@ -46,6 +44,7 @@ public class BoardComponent implements CommandLineRunner {
         this.tmpBookMark = tmpBookMark;
         this.naverImgScrapService = naverImgScrapService;
         this.naverImgSaveService = naverImgSaveService;
+        this.tmpClick = tmpClick;
     }
 
     @Override
@@ -176,6 +175,8 @@ public class BoardComponent implements CommandLineRunner {
         tmpGrade.updateGrade();
         // 테스트용 데이터 insert : 찜 insert
         tmpBookMark.updateTmpBookMark();
+        // 테스트용 데이터 insert : 찜 insert
+        tmpClick.updateTmpClick();
 
     }
 }

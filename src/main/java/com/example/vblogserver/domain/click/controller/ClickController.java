@@ -56,7 +56,6 @@ public class ClickController {
             Click setclick = Click.builder()
                     .board(board)
                     .user(user)
-                    .clickInfo(true)
                     .build();
             Click saveClick = clickRepository.save(setclick);
             // click 여부 저장 성공 시 true, 실패 시 false
