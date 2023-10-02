@@ -105,6 +105,8 @@ public class BoardComponent implements CommandLineRunner {
                         board.setTitle(get_title.replaceAll("<b>|</b>", ""));
                         board.setLink(json.optString("link"));
                         String thumbnailsLink = "";
+                        board.setThumbnails(json.optString("thumbnails"));
+                        /*
                         // blog 일 경우 API를 이용하여 썸네일 이미지 url 을 받아옴
                         if(z==1) board.setThumbnails(json.optString("thumbnails"));
                             // vlog 일 경우 이미지 크롤링하여 이미지 url을 받아옴
@@ -116,6 +118,8 @@ public class BoardComponent implements CommandLineRunner {
                                 board.setThumbnails(json.optString("thumbnails"));
                             }
                         }
+
+                         */
                         String get_description = json.optString("description");
                         board.setDescription(get_description.replaceAll("<b>|</b>", ""));
                         board.setHashtag(json.optString("heshtag"));
