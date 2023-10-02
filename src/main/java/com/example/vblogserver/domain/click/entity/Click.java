@@ -22,7 +22,7 @@ public class Click {
     private Long clickId;
 
     // Click 한 게시글 ID
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "boardID")
     private Board board;
 

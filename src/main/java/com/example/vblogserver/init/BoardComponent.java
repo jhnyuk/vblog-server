@@ -17,6 +17,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,6 +105,8 @@ public class BoardComponent implements CommandLineRunner {
                         board.setTitle(get_title.replaceAll("<b>|</b>", ""));
                         board.setLink(json.optString("link"));
                         String thumbnailsLink = "";
+                        board.setThumbnails(json.optString("thumbnails"));
+                        /*
                         // blog 일 경우 API를 이용하여 썸네일 이미지 url 을 받아옴
                         board.setThumbnails(json.optString("thumbnails"));
                         /*
@@ -122,8 +126,11 @@ public class BoardComponent implements CommandLineRunner {
                         board.setDescription(get_description.replaceAll("<b>|</b>", ""));
                         board.setHashtag(json.optString("heshtag"));
                         board.setWriter(json.optString("writer"));
-                        String get_createDate = json.optString("createDate").split("T")[0];
-                        board.setCreatedDate(get_createDate.replaceAll("-", "."));
+                        String get_createDate = json.optString("createDate");
+                        get_createDate = get_createDate.replaceAll("-", ".");
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+                        LocalDate createdDate = LocalDate.parse(get_createDate, formatter);
+                        board.setCreatedDate(createdDate);
                         boards.add(board);
                     }
                     boardRepository.saveAll(boards);
