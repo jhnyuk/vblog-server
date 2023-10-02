@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 public class SeleteReviewDTO {
     private Long reviewId;
     private String content;
-    private String createdDate;
+    private String reviewDate;
     private String userId;
     private float grade;
 
@@ -29,12 +29,12 @@ public class SeleteReviewDTO {
         this.content = content;
     }
 
-    public String getCreatedDate() {
-        return createdDate;
+    public String getReviewDate() {
+        return reviewDate;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+    public void setCreatedDate(LocalDateTime reviewDate) {
+        this.reviewDate = reviewDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
     }
 
     public String getUserId() {
