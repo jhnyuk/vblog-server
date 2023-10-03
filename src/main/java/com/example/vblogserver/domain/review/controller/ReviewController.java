@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/review")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ReviewController {
 
     private final ReviewService reviewService;

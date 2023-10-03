@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -192,7 +191,7 @@ public class BoardComponent implements CommandLineRunner {
         tmpGrade.updateGrade();
         // 테스트용 데이터 insert : 찜 insert
         tmpBookMark.updateTmpBookMark();
-        // 테스트용 데이터 insert : 찜 insert
+        // 테스트용 데이터 insert : 클릭 정보 insert
         tmpClick.updateTmpClick();
 
     }

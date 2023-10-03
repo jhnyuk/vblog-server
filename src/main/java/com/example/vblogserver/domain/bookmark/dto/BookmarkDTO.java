@@ -3,30 +3,20 @@ package com.example.vblogserver.domain.bookmark.dto;
 import com.example.vblogserver.domain.bookmark.entity.Bookmark;
 
 public class BookmarkDTO {
-	private Long id; // 찜 ID
-	private Boolean bookmark; // 찜 여부
+	private Long bookmarkId; // 찜 ID
 	private Long boardId; // 게시글 ID
 
-	public BookmarkDTO(Bookmark bookmark) {
-		this.id = bookmark.getId();
-		this.bookmark = bookmark.getBookmark();
-		this.boardId = bookmark.getBoard().getId();
+	public BookmarkDTO(Long bookmarkId, Long boardId) {
+		this.bookmarkId = bookmarkId;
+		this.boardId = boardId;
 	}
 
-	public Long getId() {
-		return id;
+	public Long getBookmarkId() {
+		return bookmarkId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Boolean getBookmark() {
-		return bookmark;
-	}
-
-	public void setBookmark(Boolean bookmark) {
-		this.bookmark = bookmark;
+	public void setBookmarkId(Long bookmarkId) {
+		this.bookmarkId = bookmarkId;
 	}
 
 	public Long getBoardId() {
