@@ -11,10 +11,7 @@ import com.example.vblogserver.global.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
@@ -37,8 +34,8 @@ public class LikeInfoContoller {
      특정 게시글에 대한 좋아요, 싫어요 저장.
      좋아요, 싫어요 구분은 true, false 로 구분.
      */
-    @PostMapping("/like/{contentId}/{likeInfo}")
-    public ResponseEntity<Map<String, Object>> updateLikeInfo(HttpServletRequest request, @PathVariable Long contentId, @PathVariable Boolean likeInfo) {
+    @PostMapping("/like/{contentId}")
+    public ResponseEntity<Map<String, Object>> updateLikeInfo(HttpServletRequest request, @PathVariable Long contentId, @RequestBody Boolean likeInfo) {
         Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
