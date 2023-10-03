@@ -50,7 +50,6 @@ public class LikeInfoContoller {
             User user;
             try {
                 user = userRepository.findByLoginId(userId).orElseThrow(() -> new IllegalArgumentException(userId + "을 찾을 수 없습니다"));
-                System.out.println(user.getId());
             } catch (IllegalArgumentException e) {
                 return ResponseEntity.ok().body(Map.of("result", false, "reason", userId + "을 찾을 수 없습니다"));
             }
@@ -105,7 +104,6 @@ public class LikeInfoContoller {
             User user;
             try {
                 user = userRepository.findByLoginId(userId).orElseThrow(() -> new IllegalArgumentException(userId + "을 찾을 수 없습니다"));
-                System.out.println(user.getId());
             } catch (IllegalArgumentException e) {
                 return ResponseEntity.ok().body(Map.of("result", false, "reason", userId + "을 찾을 수 없습니다"));
             }
