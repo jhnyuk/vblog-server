@@ -10,7 +10,7 @@ public class SeleteReviewDTO {
     private Long reviewId;
     private String content;
     private String reviewDate;
-    private String userId;
+    private String userName;
     private float grade;
 
     public Long getReviewId() {
@@ -37,12 +37,12 @@ public class SeleteReviewDTO {
         this.reviewDate = reviewDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public float getGrade() {
