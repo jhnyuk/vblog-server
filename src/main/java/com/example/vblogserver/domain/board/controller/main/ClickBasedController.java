@@ -46,7 +46,7 @@ public class ClickBasedController {
     //사용자 맞춤 추천 게시글 조회 (게시글 클릭 정보를 활용하여 조회)
 
     @GetMapping("/vlog/userBase")
-    public ResponseEntity<Map<String, Object>> getUserBasedBoardList(HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> getUserBasedVlogList(HttpServletRequest request) {
         Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
@@ -67,10 +67,30 @@ public class ClickBasedController {
         } else {
             return ResponseEntity.ok().body(Map.of("result", false, "reason", "유효하지 않은 액세스 토큰입니다."));
         }
+    }
 
+    @GetMapping("/blog/userBase")
+    public ResponseEntity<Map<String, Object>> getUserBasedBlogList(HttpServletRequest request) {
+        Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
 
+        // 액세스 토큰이 존재하고 유효하다면
+        if (accessTokenOpt.isPresent() && jwtService.isTokenValid(accessTokenOpt.get())) {
+            String userId = jwtService.extractId(accessTokenOpt.get()).orElse(null); // 액세스 토큰에서 사용자 ID 추출
 
-
+            //LoginID 로 userID 조회
+            User user;
+            try {
+                user = userRepository.findByLoginId(userId).orElseThrow(() -> new IllegalArgumentException(userId + "을 찾을 수 없습니다"));
+                if (getCategoryTop2(user)==null) return ResponseEntity.ok().body(Map.of("result", false, "reason", "2개 이상의 카테고리를 조회하지 못했습니다. 더 많은 게시글을 클릭해야합니다."));
+                else return ResponseEntity.ok().body(Map.of("result", true, "reason", getCategoryTop2(user)));
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.ok().body(Map.of("result", false, "reason", userId + "을 찾을 수 없습니다"));
+            }
+        } else {
+            return ResponseEntity.ok().body(Map.of("result", false, "reason", "유효하지 않은 액세스 토큰입니다."));
+        }
     }
     //사용자가 클릭한 게시글의 카테고리 중 가장 많이 조회된 게시글의 카테고리 TOP2 조회
     public List<CategoryMDTO> getCategoryTop2(User user){
