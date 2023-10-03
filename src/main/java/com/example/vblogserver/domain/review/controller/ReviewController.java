@@ -57,7 +57,7 @@ public class ReviewController {
                     reviewDTO.setReviewId(review.getId());
                     reviewDTO.setContent(review.getContent());
                     reviewDTO.setCreatedDate(review.getCreatedDate());
-                    reviewDTO.setUserId(review.getUser().getLoginId());
+                    reviewDTO.setUserName(review.getUser().getLoginId());
                     reviewDTO.setGrade(review.getGrade());
                     return reviewDTO;
                 })
