@@ -5,20 +5,25 @@ import java.util.Optional;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.vblogserver.domain.user.dto.ResponseDto;
-import com.example.vblogserver.domain.user.entity.User;
-import com.example.vblogserver.domain.user.repository.UserRepository;
 import com.example.vblogserver.global.jwt.service.JwtService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
+// 커스텀 예외 클래스
+class InvalidTokenException extends RuntimeException {
+	public InvalidTokenException(String message) {
+		super(message);
+	}
+}
 
 @RestController
 @RequestMapping("/token")
@@ -26,72 +31,81 @@ import lombok.RequiredArgsConstructor;
 public class TokenController {
 
 	private final JwtService jwtService;
-	private final UserRepository userRepository;
 
-	// 액세스 토큰 검증
-	@GetMapping("/verify-access")
-	public ResponseEntity<ResponseDto> verifyAccessToken(HttpServletRequest request) {
-		Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
-
-		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
-
-		// 액세스 토큰이 존재하고 유효하다면
-		if (accessTokenOpt.isPresent() && jwtService.isTokenValid(accessTokenOpt.get())) {
-			return ResponseEntity.ok().headers(responseHeaders).body(
-				new ResponseDto(true, "유효한 액세스 토큰입니다.")
-			);
-		} else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(responseHeaders).body(
-				new ResponseDto(false, "유효하지 않은 액세스 토큰입니다.")
-			);
-		}
-	}
-
-	/* 리프레시 토큰으로 액세스 토큰 재발급
-	** 리프레시 토큰으로 새로운 액세스 토큰을 발급받는다.
-	* 요청에서 리프레시 토큰을 추출한 후, 이를 검증한다.
-	 */
-	@PostMapping("/refresh-access")
+	@PostMapping("/verify/access")
 	public ResponseEntity<ResponseDto> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
+		// 액세스 토큰과 리프레시 토큰 모두 추출
+		Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
 		Optional<String> refreshTokenOpt = jwtService.extractRefreshToken(request);
 
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
 
-		if (refreshTokenOpt.isPresent()) {
+		if (accessTokenOpt.isPresent() && refreshTokenOpt.isPresent()) { // 두 종류의 토큰이 모두 제공된 경우
+			String accessToken = accessTokenOpt.get();
 			String refreshToken = refreshTokenOpt.get();
 
-			if (!jwtService.isTokenValid(refreshToken)) { // 리프레쉬 토큰이 없거나, 유효하지 않으면
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(responseHeaders).body(
-						new ResponseDto(false, "유효하지 않은 리프레시 토큰입니다. 다시 로그인 해주세요.")
-				);
+			if (!jwtService.isTokenValid(refreshToken)) { // 리프레시 토큰이 유효하지 않은 경우
+				throw new InvalidTokenException("만료된 리프레시 토큰입니다.");
 			}
 
-			try {
-				User user = userRepository.findByRefreshToken(refreshToken)
-						// 해당 리프래쉬 토큰과 연결된 사용자가 DB에서 찾아지지 않으면
-						.orElseThrow(() -> new UsernameNotFoundException("제공된 리프레시 토큰과 연관된 사용자를 찾을 수 없습니다."));
+			if (jwtService.isTokenExpired(accessToken)) { // 액세스 토큰이 만료된 경우
 
-				String loginId = user.getLoginId();
+				String loginId = jwtService.extractId(refreshToken)
+					.orElseThrow(() -> new InvalidTokenException("만료된 리프레시 토큰입니다."));
+
 				String newAccessToken = jwtService.createAccessToken(loginId);
-
 				jwtService.sendAccessToken(response, newAccessToken);
 
 				return ResponseEntity.ok().headers(responseHeaders).body(
-						new ResponseDto(true, "새로운 액세스 토큰이 발급되었습니다.")
+					new ResponseDto(true, "새로운 액세스 토큰이 발급되었습니다.")
 				);
+			} else { // 아직 유효한 액세스 독브르
 
-			} catch (UsernameNotFoundException e) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(responseHeaders).body(
-						new ResponseDto(false, e.getMessage())
+					new ResponseDto(false, "액세스 토큰이 아직 유효합니다.")
 				);
 			}
-
 		} else {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(responseHeaders).body(
-					new ResponseDto(false, "리프레시 토큰이 제공되지 않았습니다.")
+				new ResponseDto(false, "액세스 토큰 또는 리프레시 토큰이 헤더에 제공되지 않았습니다.")
 			);
 		}
+	}
+
+	@PostMapping("/reissu/refresh")
+	public ResponseEntity<ResponseDto> refreshRefreshToken(HttpServletRequest request,
+		HttpServletResponse response) {
+
+		String refreshToken = jwtService.extractRefreshToken(request)
+			.filter(jwtService::isTokenValid)
+			.orElseThrow(() -> new InvalidTokenException("만료된 리프레시 토큰입니다."));
+
+		String loginId = jwtService.extractId(refreshToken)
+			.orElseThrow(() -> new InvalidTokenException("만료된 리프레시 토큰입니다."));
+
+		String newRefreshToken = jwtService.createRefreshToken(loginId);
+		jwtService.sendAccessToken(response, newRefreshToken);
+
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
+
+		return ResponseEntity.ok().headers(responseHeaders).body(
+			new ResponseDto(true, "새로운 리프레시 토큰이 발급되었습니다.")
+		);
+	}
+}
+
+@ControllerAdvice
+class GlobalExceptionHandler {
+
+	@ExceptionHandler(InvalidTokenException.class)
+	public ResponseEntity<ResponseDto> handleInvalidJwt(InvalidTokenException e) {
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
+
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(responseHeaders).body(
+			new ResponseDto(false, e.getMessage())
+		);
 	}
 }
