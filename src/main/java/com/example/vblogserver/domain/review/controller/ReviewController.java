@@ -58,7 +58,7 @@ public class ReviewController {
                 .map(review -> {
                     SeleteReviewDTO reviewDTO = new SeleteReviewDTO();
                     reviewDTO.setReviewId(review.getId());
-                    reviewDTO.setContent(review.getContent());
+                    reviewDTO.setReviewContent(review.getContent());
                     reviewDTO.setCreatedDate(review.getCreatedDate());
                     reviewDTO.setUserName(review.getUser().getLoginId());
                     reviewDTO.setGrade(review.getGrade());
@@ -100,7 +100,7 @@ public class ReviewController {
                 .map(review -> {
                     SeleteReviewDTO reviewDTO = new SeleteReviewDTO();
                     reviewDTO.setReviewId(review.getId());
-                    reviewDTO.setContent(review.getContent());
+                    reviewDTO.setReviewContent(review.getContent());
                     reviewDTO.setCreatedDate(review.getCreatedDate());
                     reviewDTO.setUserName(review.getUser().getLoginId());
                     reviewDTO.setGrade(review.getGrade());

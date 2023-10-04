@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 public class SeleteReviewDTO {
     private Long reviewId;
-    private String content;
+    private String reviewContent;
     private String reviewDate;
     private String userName;
     private float grade;
@@ -21,12 +21,12 @@ public class SeleteReviewDTO {
         this.reviewId = reviewId;
     }
 
-    public String getContent() {
-        return content;
+    public String getReviewContent() {
+        return reviewContent;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setReviewContent(String reviewContent) {
+        this.reviewContent = reviewContent;
     }
 
     public String getReviewDate() {
