@@ -16,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,15 +44,58 @@ public class ReviewController {
         this.userService = userService;
     }
 
-    // 리뷰 조회
-    @GetMapping("/{boardId}")
-    public ResponseEntity<List<SeleteReviewDTO>> readReview(@PathVariable Long boardId) {
+    // 리뷰 조회 - 최신순
+    @GetMapping("/new/{boardId}")
+    public ResponseEntity<List<SeleteReviewDTO>> readNewReview(@PathVariable Long boardId) {
         List<Review> reviews = reviewService.getReviewByBoardId(boardId);
 
         if (reviews.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        reviews.sort((r1, r2) -> r2.getCreatedDate().compareTo(r1.getCreatedDate()));
 
+        List<SeleteReviewDTO> reviewDTOs = reviews.stream()
+                .map(review -> {
+                    SeleteReviewDTO reviewDTO = new SeleteReviewDTO();
+                    reviewDTO.setReviewId(review.getId());
+                    reviewDTO.setContent(review.getContent());
+                    reviewDTO.setCreatedDate(review.getCreatedDate());
+                    reviewDTO.setUserName(review.getUser().getLoginId());
+                    reviewDTO.setGrade(review.getGrade());
+                    return reviewDTO;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(reviewDTOs);
+
+    }
+
+    // 리뷰 조회 - 평점순
+    @GetMapping("/grade/{boardId}")
+    public ResponseEntity<List<SeleteReviewDTO>> readGradeReview(@PathVariable Long boardId) {
+        List<Review> reviews = reviewService.getReviewByBoardId(boardId);
+
+        if (reviews.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        // 부동소수점 비교에 사용할 오차 범위
+        float tolerance = 0.1f; // 0.1 이하의 오차를 허용 (소수점 첫째 자리까지)
+
+        Comparator<Review> comparator = (r1, r2) -> {
+            float grade1 = r1.getGrade();
+            float grade2 = r2.getGrade();
+
+            // 오차 범위 내에서 비교
+            if (Math.abs(grade1 - grade2) <= tolerance) {
+                return 0;
+            } else if (grade1 > grade2) {
+                return -1;
+            } else {
+                return 1;
+            }
+        };
+
+        reviews.sort(comparator);
         List<SeleteReviewDTO> reviewDTOs = reviews.stream()
                 .map(review -> {
                     SeleteReviewDTO reviewDTO = new SeleteReviewDTO();
