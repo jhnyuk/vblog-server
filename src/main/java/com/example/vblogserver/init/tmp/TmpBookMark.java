@@ -11,6 +11,7 @@ import com.example.vblogserver.domain.user.repository.UserRepository;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class TmpBookMark {
@@ -48,7 +49,16 @@ public class TmpBookMark {
             }
             String folderName = "재밌는 영상";
             BookmarkFolder bookmarkFolder = new BookmarkFolder(folderName, user, new ArrayList<>());
-            bookmarkFolderRepository.save(bookmarkFolder);
+
+            List<BookmarkFolder> existingFolders = bookmarkFolderRepository.findByNameAndUser(folderName, user);
+
+            if (!existingFolders.isEmpty()) {
+                // 폴더가 이미 존재하면, 첫 번째 폴더를 사용합니다.
+                bookmarkFolder = existingFolders.get(0);
+            } else {
+                // 폴더가 존재하지 않으면 새로 만들고 저장합니다.
+                bookmarkFolder = bookmarkFolderRepository.save(bookmarkFolder);
+            }
             Bookmark saveBookmark = Bookmark.builder()
                     .board(board)
                     .user(user)
