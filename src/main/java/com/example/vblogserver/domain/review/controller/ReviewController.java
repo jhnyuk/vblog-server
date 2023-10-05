@@ -57,7 +57,7 @@ public class ReviewController {
         List<SeleteReviewDTO> reviewDTOs = reviews.stream()
                 .map(review -> {
                     SeleteReviewDTO reviewDTO = new SeleteReviewDTO();
-                    reviewDTO.setBoardId(review.getBoard().getId());
+                    reviewDTO.setContentId(review.getBoard().getId());
                     reviewDTO.setReviewId(review.getId());
                     reviewDTO.setReviewContent(review.getContent());
                     reviewDTO.setCreatedDate(review.getCreatedDate());
@@ -100,7 +100,7 @@ public class ReviewController {
         List<SeleteReviewDTO> reviewDTOs = reviews.stream()
                 .map(review -> {
                     SeleteReviewDTO reviewDTO = new SeleteReviewDTO();
-                    reviewDTO.setBoardId(review.getBoard().getId());
+                    reviewDTO.setContentId(review.getBoard().getId());
                     reviewDTO.setReviewId(review.getId());
                     reviewDTO.setReviewContent(review.getContent());
                     reviewDTO.setCreatedDate(review.getCreatedDate());

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class SeleteReviewDTO {
-    private Long boardId;
+    private Long contentId;
     private Long reviewId;
     private String reviewContent;
     private String reviewDate;
@@ -54,11 +54,11 @@ public class SeleteReviewDTO {
         this.grade = grade;
     }
 
-    public Long getBoardId() {
-        return boardId;
+    public Long getContentId() {
+        return contentId;
     }
 
-    public void setBoardId(Long boardId) {
-        this.boardId = boardId;
+    public void setContentId(Long contentId) {
+        this.contentId = contentId;
     }
 }
