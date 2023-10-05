@@ -57,6 +57,7 @@ public class ReviewController {
         List<SeleteReviewDTO> reviewDTOs = reviews.stream()
                 .map(review -> {
                     SeleteReviewDTO reviewDTO = new SeleteReviewDTO();
+                    reviewDTO.setBoardId(review.getBoard().getId());
                     reviewDTO.setReviewId(review.getId());
                     reviewDTO.setReviewContent(review.getContent());
                     reviewDTO.setCreatedDate(review.getCreatedDate());
@@ -99,6 +100,7 @@ public class ReviewController {
         List<SeleteReviewDTO> reviewDTOs = reviews.stream()
                 .map(review -> {
                     SeleteReviewDTO reviewDTO = new SeleteReviewDTO();
+                    reviewDTO.setBoardId(review.getBoard().getId());
                     reviewDTO.setReviewId(review.getId());
                     reviewDTO.setReviewContent(review.getContent());
                     reviewDTO.setCreatedDate(review.getCreatedDate());
@@ -128,7 +130,7 @@ public class ReviewController {
             if (board == null) {
                 return ResponseEntity.ok().body(Map.of("result", false, "reason", "게시글이 존재하지 않습니다"));
             }
-            String content = createReview.get("content");
+            String reviewContent = createReview.get("reviewContent");
             float grade = Float.parseFloat(createReview.get("grade"));
 
             //LoginID 로 userID 조회
@@ -142,7 +144,7 @@ public class ReviewController {
 
 
             Review newReview = Review.builder()
-                    .content(content)
+                    .content(reviewContent)
                     .board(board)
                     .user(user)
                     .grade(grade)
@@ -177,11 +179,11 @@ public class ReviewController {
                 return ResponseEntity.ok().body(Map.of("result", false, "reason", "수정할 리뷰가 존재하지 않습니다"));
                 //return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"수정할 리뷰가 존재하지 않습니다\"}");
             }
-            String newContent = updateReview.get("content");
+            String newReviewContent = updateReview.get("reviewContent");
             float newGrade = Float.parseFloat(updateReview.get("Grade"));
 
             // 수정된 리뷰 내용+평점으로 저장
-            review.setContent(newContent);
+            review.setContent(newReviewContent);
             review.setGrade(newGrade);
             Review updatedReview = reviewRepository.save(review);
 
