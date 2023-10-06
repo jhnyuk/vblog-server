@@ -49,9 +49,6 @@ public class ReviewController {
     public ResponseEntity<List<SeleteReviewDTO>> readNewReview(@PathVariable Long boardId) {
         List<Review> reviews = reviewService.getReviewByBoardId(boardId);
 
-        if (reviews.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
         reviews.sort((r1, r2) -> r2.getCreatedDate().compareTo(r1.getCreatedDate()));
 
         List<SeleteReviewDTO> reviewDTOs = reviews.stream()
@@ -75,10 +72,6 @@ public class ReviewController {
     @GetMapping("/grade/{boardId}")
     public ResponseEntity<List<SeleteReviewDTO>> readGradeReview(@PathVariable Long boardId) {
         List<Review> reviews = reviewService.getReviewByBoardId(boardId);
-
-        if (reviews.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
         // 부동소수점 비교에 사용할 오차 범위
         float tolerance = 0.1f; // 0.1 이하의 오차를 허용 (소수점 첫째 자리까지)
 
@@ -97,9 +90,10 @@ public class ReviewController {
         };
 
         reviews.sort(comparator);
+        SeleteReviewDTO reviewDTO = new SeleteReviewDTO();
         List<SeleteReviewDTO> reviewDTOs = reviews.stream()
                 .map(review -> {
-                    SeleteReviewDTO reviewDTO = new SeleteReviewDTO();
+
                     reviewDTO.setContentId(review.getBoard().getId());
                     reviewDTO.setReviewId(review.getId());
                     reviewDTO.setReviewContent(review.getContent());
