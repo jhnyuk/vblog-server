@@ -46,9 +46,13 @@ public class ReviewController {
 
     // 리뷰 조회 - 최신순
     @GetMapping("/new/{boardId}")
-    public ResponseEntity<List<SeleteReviewDTO>> readNewReview(@PathVariable Long boardId) {
+    public ResponseEntity<?> readNewReview(@PathVariable Long boardId) {
         List<Review> reviews = reviewService.getReviewByBoardId(boardId);
-
+        //조회된 데이터가 없는 경우
+        if (reviews.isEmpty()) {
+            // 리뷰가 없을 경우 문자열 반환
+            return ResponseEntity.ok("no review");
+        }
         reviews.sort((r1, r2) -> r2.getCreatedDate().compareTo(r1.getCreatedDate()));
 
         List<SeleteReviewDTO> reviewDTOs = reviews.stream()
@@ -70,8 +74,13 @@ public class ReviewController {
 
     // 리뷰 조회 - 평점순
     @GetMapping("/grade/{boardId}")
-    public ResponseEntity<List<SeleteReviewDTO>> readGradeReview(@PathVariable Long boardId) {
+    public ResponseEntity<?> readGradeReview(@PathVariable Long boardId) {
         List<Review> reviews = reviewService.getReviewByBoardId(boardId);
+        //조회된 데이터가 없는 경우
+        if (reviews.isEmpty()) {
+            // 리뷰가 없을 경우 문자열 반환
+            return ResponseEntity.ok("no review");
+        }
         // 부동소수점 비교에 사용할 오차 범위
         float tolerance = 0.1f; // 0.1 이하의 오차를 허용 (소수점 첫째 자리까지)
 
@@ -152,7 +161,8 @@ public class ReviewController {
                 return ResponseEntity.ok().body(Map.of("result", false, "reason", "저장 실패"));
             }
         } else {
-            return ResponseEntity.ok().body(Map.of("result", false, "reason", "유효하지 않은 액세스 토큰입니다."));
+            // 유효하지 않은 토큰일 경우 405
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -187,7 +197,8 @@ public class ReviewController {
                 return ResponseEntity.ok().body(Map.of("result", false, "reason", "수정 실패"));
             }
         } else {
-            return ResponseEntity.ok().body(Map.of("result", false, "reason", "유효하지 않은 액세스 토큰입니다."));
+            // 유효하지 않은 토큰일 경우 405
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -213,7 +224,8 @@ public class ReviewController {
             reviewRepository.delete(review);
             return ResponseEntity.ok().body(Map.of("result", true, "reason", "삭제 성공"));
         } else {
-            return ResponseEntity.ok().body(Map.of("result", false, "reason", "유효하지 않은 액세스 토큰입니다."));
+            // 유효하지 않은 토큰일 경우 405
+            return ResponseEntity.notFound().build();
         }
     }
 }
