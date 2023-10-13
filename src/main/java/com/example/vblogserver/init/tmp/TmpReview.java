@@ -41,6 +41,8 @@ public class TmpReview {
                 String content = "";
                 String userId = "testuser";
                 if(y == 0) content = "진짜 재미있어요 !";
+                // 1번 게시글의 2번 리뷰에는 값이 null 이 들어감
+                else if(y==1 && i==1) content = null;
                 else content = "도움이 많이 됬어요~~";
                 float grade;
                 if(y == 0) grade = 4.5f;
