@@ -57,7 +57,7 @@ public class ReviewController {
                     reviewDTO.setContentId(review.getBoard().getId());
                     reviewDTO.setReviewId(review.getId());
                     // 평점만 있고 리뷰 내용이 없을 경우 "no review" 로 내려줌
-                    if(review.getContent().equals("")) reviewDTO.setReviewContent("No review");
+                    if(review.getContent()==null) reviewDTO.setReviewContent("No review");
                     // 리뷰 내용이 있는 경우
                     else reviewDTO.setReviewContent(review.getContent());
                     reviewDTO.setCreatedDate(review.getCreatedDate());
@@ -101,7 +101,7 @@ public class ReviewController {
                     reviewDTO.setContentId(review.getBoard().getId());
                     reviewDTO.setReviewId(review.getId());
                     // 평점만 있고 리뷰 내용이 없을 경우 "no review" 로 내려줌
-                    if(review.getContent().equals("")) reviewDTO.setReviewContent("No review");
+                    if(review.getContent()==null) reviewDTO.setReviewContent("No review");
                         // 리뷰 내용이 있는 경우
                     else reviewDTO.setReviewContent(review.getContent());
                     reviewDTO.setCreatedDate(review.getCreatedDate());
