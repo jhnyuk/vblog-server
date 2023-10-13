@@ -46,13 +46,9 @@ public class ReviewController {
 
     // 리뷰 조회 - 최신순
     @GetMapping("/new/{boardId}")
-    public ResponseEntity<?> readNewReview(@PathVariable Long boardId) {
+    public ResponseEntity<List<SeleteReviewDTO>> readNewReview(@PathVariable Long boardId) {
         List<Review> reviews = reviewService.getReviewByBoardId(boardId);
-        //조회된 데이터가 없는 경우
-        if (reviews.isEmpty()) {
-            // 리뷰가 없을 경우 문자열 반환
-            return ResponseEntity.ok("no review");
-        }
+
         reviews.sort((r1, r2) -> r2.getCreatedDate().compareTo(r1.getCreatedDate()));
 
         List<SeleteReviewDTO> reviewDTOs = reviews.stream()
@@ -60,7 +56,10 @@ public class ReviewController {
                     SeleteReviewDTO reviewDTO = new SeleteReviewDTO();
                     reviewDTO.setContentId(review.getBoard().getId());
                     reviewDTO.setReviewId(review.getId());
-                    reviewDTO.setReviewContent(review.getContent());
+                    // 평점만 있고 리뷰 내용이 없을 경우 "no review" 로 내려줌
+                    if(review.getContent().equals("")) reviewDTO.setReviewContent("No review");
+                    // 리뷰 내용이 있는 경우
+                    else reviewDTO.setReviewContent(review.getContent());
                     reviewDTO.setCreatedDate(review.getCreatedDate());
                     reviewDTO.setUserName(review.getUser().getLoginId());
                     reviewDTO.setGrade(review.getGrade());
@@ -76,11 +75,7 @@ public class ReviewController {
     @GetMapping("/grade/{boardId}")
     public ResponseEntity<?> readGradeReview(@PathVariable Long boardId) {
         List<Review> reviews = reviewService.getReviewByBoardId(boardId);
-        //조회된 데이터가 없는 경우
-        if (reviews.isEmpty()) {
-            // 리뷰가 없을 경우 문자열 반환
-            return ResponseEntity.ok("no review");
-        }
+
         // 부동소수점 비교에 사용할 오차 범위
         float tolerance = 0.1f; // 0.1 이하의 오차를 허용 (소수점 첫째 자리까지)
 
@@ -99,13 +94,16 @@ public class ReviewController {
         };
 
         reviews.sort(comparator);
-        SeleteReviewDTO reviewDTO = new SeleteReviewDTO();
+
         List<SeleteReviewDTO> reviewDTOs = reviews.stream()
                 .map(review -> {
-
+                    SeleteReviewDTO reviewDTO = new SeleteReviewDTO();
                     reviewDTO.setContentId(review.getBoard().getId());
                     reviewDTO.setReviewId(review.getId());
-                    reviewDTO.setReviewContent(review.getContent());
+                    // 평점만 있고 리뷰 내용이 없을 경우 "no review" 로 내려줌
+                    if(review.getContent().equals("")) reviewDTO.setReviewContent("No review");
+                        // 리뷰 내용이 있는 경우
+                    else reviewDTO.setReviewContent(review.getContent());
                     reviewDTO.setCreatedDate(review.getCreatedDate());
                     reviewDTO.setUserName(review.getUser().getLoginId());
                     reviewDTO.setGrade(review.getGrade());
