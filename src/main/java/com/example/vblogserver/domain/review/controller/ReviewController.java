@@ -13,6 +13,7 @@ import com.example.vblogserver.global.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,7 +59,7 @@ public class ReviewController {
                     reviewDTO.setReviewId(review.getId());
                     // 평점만 있고 리뷰 내용이 없을 경우 "no review" 로 내려줌
                     if(review.getContent()==null) reviewDTO.setReviewContent("No review");
-                    // 리뷰 내용이 있는 경우
+                        // 리뷰 내용이 있는 경우
                     else reviewDTO.setReviewContent(review.getContent());
                     reviewDTO.setCreatedDate(review.getCreatedDate());
                     reviewDTO.setUserName(review.getUser().getLoginId());
@@ -118,50 +119,63 @@ public class ReviewController {
     //리뷰 작성
     @PostMapping("/{boardId}")
     public ResponseEntity<Map<String, Object>> createReview(HttpServletRequest request, @PathVariable Long boardId,  @RequestBody Map<String, String> createReview) {
+        // 액세스 토큰 추출
         Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
 
-        // 액세스 토큰이 존재하고 유효하다면
-        if (accessTokenOpt.isPresent() && jwtService.isTokenValid(accessTokenOpt.get())) {
-            String userId = jwtService.extractId(accessTokenOpt.get()).orElse(null); // 액세스 토큰에서 사용자 ID 추출
-            //BoardID 로 게시글 조회
-            Board board = boardService.getBoardById(boardId);
-
-            if (board == null) {
-                return ResponseEntity.ok().body(Map.of("result", false, "reason", "게시글이 존재하지 않습니다"));
-            }
-            String reviewContent = createReview.get("reviewContent");
-            float grade = Float.parseFloat(createReview.get("grade"));
-
-            //LoginID 로 userID 조회
-
-            User user;
-            try {
-                user = userRepository.findByLoginId(userId).orElseThrow(() -> new IllegalArgumentException(userId + "을 찾을 수 없습니다"));
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity.ok().body(Map.of("result", false, "reason", userId+"을 찾을 수 없습니다"));
-            }
-
-
-            Review newReview = Review.builder()
-                    .content(reviewContent)
-                    .board(board)
-                    .user(user)
-                    .grade(grade)
-                    .build();
-
-            Review saveReview = reviewRepository.save(newReview);
-            //리뷰 저장 성공 시 true, 실패 시 false
-            if(saveReview != null){
-                return ResponseEntity.ok().body(Map.of("result", true, "reason", "저장 성공"));
-            } else{
-                return ResponseEntity.ok().body(Map.of("result", false, "reason", "저장 실패"));
-            }
-        } else {
+        // 액세스 토큰이 존재하지 않거나 유효하지 않다면 에러 응답 반환
+        if (accessTokenOpt.isEmpty() || !jwtService.isTokenValid(accessTokenOpt.get())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            /*
             // 유효하지 않은 토큰일 경우 405
             return ResponseEntity.notFound().build();
+             */
         }
+
+        // 액세스 토큰에서 로그인 아이디 추출
+        Optional<String> loginIdOpt = jwtService.extractId(accessTokenOpt.get());
+
+        // 로그인 아이디가 존재하지 않으면 에러 응답 반환
+        if (loginIdOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        // 게시글이 존재하는지 확인
+        Board board = boardService.getBoardById(boardId);
+
+        if (board == null) {
+            return ResponseEntity.ok().body(Map.of("result", false, "reason", "게시글이 존재하지 않습니다"));
+        }
+
+        String userId = jwtService.extractId(accessTokenOpt.get()).orElse(null); // 액세스 토큰에서 사용자 ID 추출
+        //BoardID 로 게시글 조회
+
+        String reviewContent = createReview.get("reviewContent");
+        float grade = Float.parseFloat(createReview.get("grade"));
+
+        //LoginID 로 userID 조회
+        User user;
+        try {
+            user = userRepository.findByLoginId(userId).orElseThrow(() -> new IllegalArgumentException(userId + "을 찾을 수 없습니다"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.ok().body(Map.of("result", false, "reason", userId+"을 찾을 수 없습니다"));
+        }
+
+
+        Review newReview = Review.builder()
+                .content(reviewContent)
+                .board(board)
+                .user(user)
+                .grade(grade)
+                .build();
+
+        Review saveReview = reviewRepository.save(newReview);
+        //리뷰 저장 성공 시 true, 실패 시 false
+        if(saveReview != null){
+            return ResponseEntity.ok().body(Map.of("result", true, "reason", "저장 성공"));
+        } else{
+            return ResponseEntity.ok().body(Map.of("result", false, "reason", "저장 실패"));
+        }
+
     }
 
     //리뷰 수정
