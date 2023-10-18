@@ -30,4 +30,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findByIdInAndCategoryG_CategoryNameIgnoreCase(List<Long> ids, String categoryName);
 
     List<Board> findByUserIdAndCategoryG_CategoryNameIgnoreCase(Long userId, String categoryName);
+
+    List<Board> findByHashtagContainingOrDescriptionContainingOrTitleContaining(String hashtag, String description, String title);
 }
