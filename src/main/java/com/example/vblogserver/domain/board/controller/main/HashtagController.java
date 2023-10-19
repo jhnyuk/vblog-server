@@ -32,7 +32,7 @@ public class HashtagController {
     @GetMapping("/blog/hashtags")
     public List<String> searchBlog() {
         CategoryG categoryG = new CategoryG();
-        categoryG.setId(1L);
+        categoryG.setId(2L);
         return searchHashtags(categoryG);
     }
 
