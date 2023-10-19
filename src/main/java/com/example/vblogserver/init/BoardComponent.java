@@ -123,7 +123,14 @@ public class BoardComponent implements CommandLineRunner {
                          */
                         String get_description = json.optString("description");
                         board.setDescription(get_description.replaceAll("<b>|</b>", ""));
-                        board.setHashtag(json.optString("heshtag"));
+                        String get_hashtag = json.optString("heshtag");
+                        board.setHashtag(
+                                get_hashtag.replaceAll("39;","")
+                                            .replaceAll("]","")
+                                            .replaceAll("##","#")
+                                            .replaceAll("#s","")
+                        );
+
                         board.setWriter(json.optString("writer"));
                         String get_createDate = json.optString("createDate");
                         get_createDate = get_createDate.replaceAll("-", ".");
