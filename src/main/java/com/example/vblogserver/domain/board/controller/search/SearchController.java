@@ -1,7 +1,9 @@
 package com.example.vblogserver.domain.board.controller.search;
 
+import com.example.vblogserver.domain.board.dto.MainBoardDTO;
 import com.example.vblogserver.domain.board.entity.Board;
 import com.example.vblogserver.domain.board.repository.BoardRepository;
+import com.example.vblogserver.domain.board.service.main.DTOConvertServcie;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,21 +17,24 @@ import java.util.stream.Collectors;
 public class SearchController {
     private final BoardRepository boardRepository;
 
-    public SearchController(BoardRepository boardRepository) {
+    private final DTOConvertServcie dtoConvertServcie;
+
+    public SearchController(BoardRepository boardRepository, DTOConvertServcie dtoConvertServcie) {
         this.boardRepository = boardRepository;
+        this.dtoConvertServcie = dtoConvertServcie;
     }
 
     @GetMapping("/vlog/search")
-    public List<Board> searchVlog(@RequestParam String keyword) {
+    public List<MainBoardDTO> searchVlog(@RequestParam String keyword) {
         return searchBoards(keyword,"vlog");
     }
 
     @GetMapping("/blog/search")
-    public List<Board> searchBlog(@RequestParam String keyword) {
+    public List<MainBoardDTO> searchBlog(@RequestParam String keyword) {
         return searchBoards(keyword,"blog");
     }
 
-    public List<Board> searchBoards(String keyword, String isVblog){
+    public List<MainBoardDTO> searchBoards(String keyword, String isVblog){
         List<Board> searchResults = boardRepository.findByHashtagContainingOrDescriptionContainingOrTitleContaining(keyword, keyword, keyword);
 
         // 검색 결과 필터링 (vlog, blog)
@@ -43,6 +48,6 @@ public class SearchController {
                     .collect(Collectors.toList());
         }
 
-        return searchResults;
+        return dtoConvertServcie.BoardToMainBoard(searchResults);
     }
 }
