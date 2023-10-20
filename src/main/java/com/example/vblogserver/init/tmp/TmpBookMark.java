@@ -67,7 +67,6 @@ public class TmpBookMark {
             bookmarkRepository.save(saveBookmark);
 
         }
-        System.out.println("찜 저장 성공");
     }
 
 

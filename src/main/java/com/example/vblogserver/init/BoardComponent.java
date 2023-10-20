@@ -22,7 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class BoardComponent implements CommandLineRunner {
+public class BoardComponent {
+//public class BoardComponent implements CommandLineRunner {
     private final BoardRepository boardRepository;
     private final YoutubeService youtubeService;
     private final NaverService naverService;
@@ -48,8 +49,12 @@ public class BoardComponent implements CommandLineRunner {
         this.tmpClick = tmpClick;
     }
 
-    @Override
-    public void run(String... arg){
+
+    public void initData(){
+    //@Override
+    //public void run(String... arg){
+        System.out.println("CommandLineRunner2");
+
         // 카테고리 항목
         String[][] category_name = {
                 {"1","1|2","국내여행|해외여행"},

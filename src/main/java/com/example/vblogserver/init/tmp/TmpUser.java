@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 
 @Order(1)
 @Component
-public class TmpUser implements CommandLineRunner {
+public class TmpUser {
+//public class TmpUser implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -19,7 +20,7 @@ public class TmpUser implements CommandLineRunner {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
-
+/*
     @Override
     public void run(String... args) throws Exception {
         User testUser = User.builder()
@@ -32,5 +33,8 @@ public class TmpUser implements CommandLineRunner {
             .build();
         testUser.passwordEncode(passwordEncoder);
         userRepository.save(testUser);
+        System.out.println("CommandLineRunner1");
     }
+
+ */
 }
