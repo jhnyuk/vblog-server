@@ -46,7 +46,6 @@ public class TmpClick {
             Click saveClick = clickRepository.save(setclick);
             // click 여부 저장 성공 시 true, 실패 시 false
             if (saveClick != null) {
-                System.out.println("Tmp Click 저장 성공");
             } else {
                 System.out.println("Tmp Click 저장 실패");
             }

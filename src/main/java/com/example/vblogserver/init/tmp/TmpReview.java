@@ -91,7 +91,7 @@ public class TmpReview {
                     Review saveReview = reviewRepository.save(newReview);
 
                     if (saveReview != null) {
-                        System.out.println("리뷰 임시 데이터 저장 성공");
+                        //System.out.println("리뷰 임시 데이터 저장 성공");
                         //return "리뷰 임시 데이터 저장 성공";
                     } else {
                         System.out.println("리뷰 임시 데이터 저장 실패");
@@ -136,7 +136,7 @@ public class TmpReview {
                     Review saveReview = reviewRepository.save(newReview);
 
                     if (saveReview != null) {
-                        System.out.println("리뷰 임시 데이터 저장 성공");
+                        //System.out.println("리뷰 임시 데이터 저장 성공");
                         //return "리뷰 임시 데이터 저장 성공";
                     } else {
                         System.out.println("리뷰 임시 데이터 저장 실패");
