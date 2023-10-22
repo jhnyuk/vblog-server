@@ -41,13 +41,13 @@ public class ReviewsController {
 	@GetMapping("/blog")
 	public ResponseEntity<Page<ReviewDTO>> getUserBlogReviews(HttpServletRequest request,
 		@RequestParam(defaultValue = "0") int page) {
-		return getUserReviewsByCategory(request, "blog", PageRequest.of(page, 10));
+		return getUserReviewsByCategory(request, "blog", PageRequest.of(page, 5));
 	}
 
 	@GetMapping("/vlog")
 	public ResponseEntity<Page<ReviewDTO>> getUserVlogReviews(HttpServletRequest request,
 		@RequestParam(defaultValue = "0") int page) {
-		return getUserReviewsByCategory(request, "vlog", PageRequest.of(page, 10));
+		return getUserReviewsByCategory(request, "vlog", PageRequest.of(page, 5));
 	}
 
 	private ResponseEntity<Page<ReviewDTO>> getUserReviewsByCategory(HttpServletRequest request, String category,
