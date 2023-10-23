@@ -196,7 +196,7 @@ public class ReviewController {
     public ResponseEntity<Map<String, Object>> updateReview(HttpServletRequest request, @PathVariable Long reviewId,  @RequestBody Map<String, String> updateReview) {
         Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
+        responseHeaders.set("Content-Type", "application/text;charset=UTF-8");
 
         // 액세스 토큰이 존재하고 유효하다면
         if (accessTokenOpt.isPresent() && jwtService.isTokenValid(accessTokenOpt.get())) {
