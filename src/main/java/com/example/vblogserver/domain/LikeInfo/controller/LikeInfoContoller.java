@@ -35,7 +35,7 @@ public class LikeInfoContoller {
      좋아요, 싫어요 구분은 true, false 로 구분.
      */
     @PostMapping("/like/{contentId}")
-    public ResponseEntity<Map<String, Object>> updateLikeInfo(HttpServletRequest request, @PathVariable Long contentId, @RequestBody Boolean likeInfo) {
+    public String updateLikeInfo(HttpServletRequest request, @PathVariable Long contentId, @RequestBody LikeInfoDTO likeInfoDTO) {
         Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
@@ -48,7 +48,8 @@ public class LikeInfoContoller {
             try {
                 user = userRepository.findByLoginId(userId).orElseThrow(() -> new IllegalArgumentException(userId + "을 찾을 수 없습니다"));
             } catch (IllegalArgumentException e) {
-                return ResponseEntity.ok().body(Map.of("result", false, "reason", userId + "을 찾을 수 없습니다"));
+                return "로그인한 유저를 찾을 수 없습니다";
+                //return ResponseEntity.ok().body(Map.of("result", false, "reason", userId + "을 찾을 수 없습니다"));
             }
 
             // BoardID 로 게시글 조회
@@ -60,30 +61,35 @@ public class LikeInfoContoller {
             // 이미 저장된 LikeInfo가 있으면 업데이트, 없으면 새로 생성
             if (existingLikeInfoOpt.isPresent()) {
                 LikeInfo existingLikeInfo = existingLikeInfoOpt.get();
-                existingLikeInfo.setLikeInfo(likeInfo);
+                existingLikeInfo.setLikeInfo(likeInfoDTO.getLikeInfo());
                 // 업데이트된 LikeInfo 저장
                 LikeInfo updatedLikeInfo = likeInfoRepository.save(existingLikeInfo);
                 if (updatedLikeInfo != null) {
-                    return ResponseEntity.ok().body(Map.of("result", true, "reason", "업데이트 성공"));
+                    return "업데이트 성공";
+                    //return ResponseEntity.ok().body(Map.of("result", true, "reason", "업데이트 성공"));
                 } else {
-                    return ResponseEntity.ok().body(Map.of("result", false, "reason", "업데이트 실패"));
+                    return "업데이트 실패";
+                    //return ResponseEntity.ok().body(Map.of("result", false, "reason", "업데이트 실패"));
                 }
             } else {
                 // 새로운 LikeInfo 생성 및 저장
                 LikeInfo newLikeInfo = LikeInfo.builder()
                         .board(board)
                         .user(user)
-                        .likeInfo(likeInfo)
+                        .likeInfo(likeInfoDTO.getLikeInfo())
                         .build();
                 LikeInfo savedLikeInfo = likeInfoRepository.save(newLikeInfo);
                 if (savedLikeInfo != null) {
-                    return ResponseEntity.ok().body(Map.of("result", true, "reason", "저장 성공"));
+                    return "저장 성공";
+                    //return ResponseEntity.ok().body(Map.of("result", true, "reason", "저장 성공"));
                 } else {
-                    return ResponseEntity.ok().body(Map.of("result", false, "reason", "저장 실패"));
+                    return "저장 실패";
+                    //return ResponseEntity.ok().body(Map.of("result", false, "reason", "저장 실패"));
                 }
             }
         } else {
-            return ResponseEntity.ok().body(Map.of("result", false, "reason", "유효하지 않은 액세스 토큰입니다."));
+            return "유효하지 않은 액세스 토큰입니다";
+            //return ResponseEntity.ok().body(Map.of("result", false, "reason", "유효하지 않은 액세스 토큰입니다."));
         }
     }
 
