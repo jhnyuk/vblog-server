@@ -2,12 +2,13 @@ package com.example.vblogserver.domain.click.entity;
 
 import com.example.vblogserver.domain.board.entity.Board;
 import com.example.vblogserver.domain.user.entity.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -31,6 +32,10 @@ public class Click {
     @JoinColumn(name = "userNo")
     private User user;
 
+    // 클릭한 날짜 (년, 월, 일만 저장)
+    @CreatedDate
+    private LocalDateTime clickedDate;
+
     @Builder
     public Click(Board board, User user) {
         this.board = board;
@@ -52,5 +57,16 @@ public class Click {
     public void setBoard(Board board) {
         this.board = board;
     }
+
+    public void setClickedDate(LocalDateTime clickedDate) {
+        this.clickedDate = clickedDate;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        clickedDate = LocalDateTime.now(); // 현재 서버 시간으로 설정
+    }
+
+
 
 }

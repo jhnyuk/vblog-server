@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -59,7 +60,11 @@ public class ClickController {
             boolean hasClicked = clickRepository.existsByBoardAndUser(board, user);
 
             if (hasClicked) {
-                return ResponseEntity.ok().body(Map.of("result", false, "reason", "이미 클릭한 게시글입니다."));
+                // 이미 클릭한 내역이 있다면 시간 업데이트
+                Click existingClick = clickRepository.findByBoardAndUser(board, user);
+                existingClick.setClickedDate(LocalDateTime.now());
+                clickRepository.save(existingClick);
+                return ResponseEntity.ok().body(Map.of("result", true, "reason", "최근 기록이 업데이트 되었습니다."));
             }
             // Click 여부 저장
             Click setclick = Click.builder()
