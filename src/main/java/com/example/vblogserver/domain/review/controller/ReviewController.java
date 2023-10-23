@@ -124,7 +124,7 @@ public class ReviewController {
 
         // 액세스 토큰이 존재하지 않거나 유효하지 않다면 에러 응답 반환
         if (accessTokenOpt.isEmpty() || !jwtService.isTokenValid(accessTokenOpt.get())) {
-            return ResponseEntity.status(HttpStatus.OK).headers(responseHeaders).body("토큰 에러");
+            return ResponseEntity.status(HttpStatus.OK).body("토큰 에러");
             //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
             /*
             // 유효하지 않은 토큰일 경우 405
@@ -137,7 +137,7 @@ public class ReviewController {
 
         // 로그인 아이디가 존재하지 않으면 에러 응답 반환
         if (loginIdOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.OK).headers(responseHeaders).body("존재하지 않는 아이디입니다.");
+            return ResponseEntity.status(HttpStatus.OK).body("존재하지 않는 아이디입니다.");
             //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
@@ -145,7 +145,7 @@ public class ReviewController {
         Board board = boardService.getBoardById(boardId);
 
         if (board == null) {
-            return ResponseEntity.status(HttpStatus.OK).headers(responseHeaders).body("게시글이 존재하지 않습니다");
+            return ResponseEntity.status(HttpStatus.OK).body("게시글이 존재하지 않습니다");
             //return ResponseEntity.ok().body(Map.of("result", false, "reason", "게시글이 존재하지 않습니다"));
         }
 
@@ -160,7 +160,8 @@ public class ReviewController {
         try {
             user = userRepository.findByLoginId(userId).orElseThrow(() -> new IllegalArgumentException(userId + "을 찾을 수 없습니다"));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.ok().body(Map.of("result", false, "reason", userId+"을 찾을 수 없습니다"));
+            return ResponseEntity.status(HttpStatus.OK).body(userId+"을 찾을 수 없습니다");
+            //return ResponseEntity.ok().body(Map.of("result", false, "reason", userId+"을 찾을 수 없습니다"));
         }
 
 
@@ -174,10 +175,10 @@ public class ReviewController {
         Review saveReview = reviewRepository.save(newReview);
         //리뷰 저장 성공 시 true, 실패 시 false
         if(saveReview != null){
-            return ResponseEntity.status(HttpStatus.OK).headers(responseHeaders).body("저장성공");
+            return ResponseEntity.status(HttpStatus.OK).body("저장성공");
             //return ResponseEntity.ok().body(Map.of("result", true, "reason", "저장 성공"));
         } else{
-            return ResponseEntity.status(HttpStatus.OK).headers(responseHeaders).body("저장실패");
+            return ResponseEntity.status(HttpStatus.OK).body("저장실패");
             //return ResponseEntity.ok().body(Map.of("result", false, "reason", "저장 실패"));
         }
 
