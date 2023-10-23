@@ -14,4 +14,5 @@ public interface ClickRepository  extends JpaRepository<Click, Long> {
 	List<Click> findByUser(User user);
 	Page<Click> findByUser(User user, Pageable pageable);
 	Boolean existsByBoardAndUser(Board board, User user);
+	Click findByBoardAndUser(Board board, User user);
 }
