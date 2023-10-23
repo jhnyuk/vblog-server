@@ -3,6 +3,9 @@ package com.example.vblogserver.domain.user.service;
 import com.example.vblogserver.domain.user.util.UserNotFoundException;
 import com.example.vblogserver.global.jwt.service.JwtService;
 import com.example.vblogserver.global.jwt.util.InvalidTokenException;
+import com.example.vblogserver.global.jwt.util.TokenExpiredException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,15 +15,14 @@ import com.example.vblogserver.domain.user.entity.Role;
 import com.example.vblogserver.domain.user.entity.User;
 import com.example.vblogserver.domain.user.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class UserService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+    @Autowired private UserRepository userRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private JwtService jwtService;
 
     /*
 	자체 로그인 회원 가입 시 사용하는 회원 가입 API 로직
@@ -82,11 +84,15 @@ public class UserService {
     }
 
     public User getUserByAccessToken(String accessToken) throws InvalidTokenException, UserNotFoundException {
-        String loginId = jwtService.extractId(accessToken)
-            .orElseThrow(() -> new InvalidTokenException("유효하지 않은 액세스 토큰입니다."));
+        try {
+            String loginId = jwtService.extractId(accessToken)
+                    .orElseThrow(() -> new InvalidTokenException("유효하지 않은 액세스 토큰입니다."));
 
-        return userRepository.findByLoginId(loginId)
-            .orElseThrow(() -> new UserNotFoundException("존재하지 않는 유저입니다."));
+            return userRepository.findByLoginId(loginId)
+                    .orElseThrow(() -> new UserNotFoundException("존재하지 않는 유저입니다."));
+        } catch (InvalidTokenException | TokenExpiredException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 액세스 토큰입니다.", e);
+        }
     }
 
     // 이름 수정 메서드
