@@ -2,6 +2,7 @@ package com.example.vblogserver.domain.review.controller;
 
 import com.example.vblogserver.domain.board.entity.Board;
 import com.example.vblogserver.domain.board.service.BoardService;
+import com.example.vblogserver.domain.review.dto.RequestReviewDTO;
 import com.example.vblogserver.domain.review.dto.ReviewDTO;
 import com.example.vblogserver.domain.review.dto.SeleteReviewDTO;
 import com.example.vblogserver.domain.review.entity.Review;
@@ -118,7 +119,7 @@ public class ReviewController {
 
     //리뷰 작성
     @PostMapping("/{boardId}")
-    public /*ResponseEntity<String>*/String createReview(HttpServletRequest request, @PathVariable Long boardId,  @RequestBody Map<String, String> createReview) {
+    public /*ResponseEntity<String>*/String createReview(HttpServletRequest request, @PathVariable Long boardId,  @RequestBody RequestReviewDTO requestReviewDTO) {
         // 액세스 토큰 추출
         Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
 
@@ -155,8 +156,8 @@ public class ReviewController {
         String userId = jwtService.extractId(accessTokenOpt.get()).orElse(null); // 액세스 토큰에서 사용자 ID 추출
         //BoardID 로 게시글 조회
 
-        String reviewContent = createReview.get("reviewContent");
-        float grade = Float.parseFloat(createReview.get("grade"));
+        String reviewContent = requestReviewDTO.getContent();
+        float grade = requestReviewDTO.getGrade();
 
         //LoginID 로 userID 조회
         User user;
