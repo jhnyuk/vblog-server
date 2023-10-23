@@ -164,7 +164,7 @@ public class ReviewController {
         System.out.println("9");
         String reviewContent = requestReviewDTO.getContent();
         System.out.println("10");
-        float grade = (float)requestReviewDTO.getGrade();
+        float grade = Float.parseFloat(requestReviewDTO.getGrade().toString());
         System.out.println("11");
         //LoginID 로 userID 조회
         User user;
