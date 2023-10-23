@@ -120,14 +120,11 @@ public class ReviewController {
     //리뷰 작성
     @PostMapping("/{boardId}")
     public /*ResponseEntity<String>*/String createReview(HttpServletRequest request, @PathVariable Long boardId,  @RequestBody RequestReviewDTO requestReviewDTO) {
-        System.out.println(requestReviewDTO.getContent()+" "+requestReviewDTO.getGrade());
         // 액세스 토큰 추출
         Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
-        System.out.println("1");
 
         // 액세스 토큰이 존재하지 않거나 유효하지 않다면 에러 응답 반환
         if (accessTokenOpt.isEmpty() || !jwtService.isTokenValid(accessTokenOpt.get())) {
-            System.out.println("2");
             return "토큰 에러";
             //return ResponseEntity.status(HttpStatus.OK).body("토큰 에러");
             //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
@@ -139,47 +136,42 @@ public class ReviewController {
 
         // 액세스 토큰에서 로그인 아이디 추출
         Optional<String> loginIdOpt = jwtService.extractId(accessTokenOpt.get());
-        System.out.println("3");
 
         // 로그인 아이디가 존재하지 않으면 에러 응답 반환
         if (loginIdOpt.isEmpty()) {
-            System.out.println("4");
             return "존재하지 않는 아이디입니다.";
             //return ResponseEntity.status(HttpStatus.OK).body("존재하지 않는 아이디입니다.");
             //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
-        System.out.println("5");
-        // 게시글이 존재하는지 확인
+
         Board board = boardService.getBoardById(boardId);
-        System.out.println("6");
+
         if (board == null) {
-            System.out.println("7");
+
             return "게시글이 존재하지 않습니다";
             //return ResponseEntity.status(HttpStatus.OK).body("게시글이 존재하지 않습니다");
             //return ResponseEntity.ok().body(Map.of("result", false, "reason", "게시글이 존재하지 않습니다"));
         }
-        System.out.println("8");
+
         String userId = jwtService.extractId(accessTokenOpt.get()).orElse(null); // 액세스 토큰에서 사용자 ID 추출
         //BoardID 로 게시글 조회
-        System.out.println("9");
-        String reviewContent = requestReviewDTO.getContent();
-        System.out.println("10");
+
+        String reviewContent = requestReviewDTO.getReviewContent();
+
         float grade = Float.parseFloat(requestReviewDTO.getGrade().toString());
-        System.out.println("11");
+
         //LoginID 로 userID 조회
         User user;
-        System.out.println("12");
+
         try {
-            System.out.println("13");
             user = userRepository.findByLoginId(userId).orElseThrow(() -> new IllegalArgumentException(userId + "을 찾을 수 없습니다"));
         } catch (IllegalArgumentException e) {
-            System.out.println("14");
             return userId+"을 찾을 수 없습니다";
             //return ResponseEntity.status(HttpStatus.OK).body(userId+"을 찾을 수 없습니다");
             //return ResponseEntity.ok().body(Map.of("result", false, "reason", userId+"을 찾을 수 없습니다"));
         }
 
-        System.out.println("15");
+        System.out.println(reviewContent);
         Review newReview = Review.builder()
                 .content(reviewContent)
                 .board(board)
@@ -190,12 +182,12 @@ public class ReviewController {
         Review saveReview = reviewRepository.save(newReview);
         //리뷰 저장 성공 시 true, 실패 시 false
         if(saveReview != null){
-            System.out.println("저장성공");
+            System.out.println("리뷰저장성공");
             return "저장성공";
             //return ResponseEntity.status(HttpStatus.OK).body("저장성공");
             //return ResponseEntity.ok().body(Map.of("result", true, "reason", "저장 성공"));
         } else{
-            System.out.println("저장실패");
+            System.out.println("리뷰저장실패");
             return "저장실패";
             //return ResponseEntity.status(HttpStatus.OK).body("저장실패");
             //return ResponseEntity.ok().body(Map.of("result", false, "reason", "저장 실패"));
