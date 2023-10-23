@@ -6,7 +6,7 @@ public class RequestReviewDTO {
     private String content;
 
     //평점
-    private float grade;
+    private Number grade;
 
     public String getContent() {
         return content;
@@ -16,11 +16,11 @@ public class RequestReviewDTO {
         this.content = content;
     }
 
-    public float getGrade() {
+    public Number getGrade() {
         return grade;
     }
 
-    public void setGrade(float grade) {
+    public void setGrade(Number grade) {
         this.grade = grade;
     }
 }
