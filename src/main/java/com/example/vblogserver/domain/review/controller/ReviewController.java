@@ -120,6 +120,7 @@ public class ReviewController {
     //리뷰 작성
     @PostMapping("/{boardId}")
     public /*ResponseEntity<String>*/String createReview(HttpServletRequest request, @PathVariable Long boardId,  @RequestBody RequestReviewDTO requestReviewDTO) {
+        System.out.println(requestReviewDTO.getContent()+" "+requestReviewDTO.getGrade());
         // 액세스 토큰 추출
         Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
         System.out.println("1");
