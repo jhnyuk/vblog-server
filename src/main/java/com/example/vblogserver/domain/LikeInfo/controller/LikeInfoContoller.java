@@ -35,7 +35,7 @@ public class LikeInfoContoller {
      좋아요, 싫어요 구분은 true, false 로 구분.
      */
     @PostMapping("/like/{contentId}")
-    public ResponseEntity<Map<String, Object>> updateLikeInfo(HttpServletRequest request, @PathVariable Long contentId, @RequestBody Boolean likeInfo) {
+    public ResponseEntity<Map<String, Object>> updateLikeInfo(HttpServletRequest request, @PathVariable Long contentId, @RequestBody LikeInfoDTO likeInfoDTO) {
         Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
@@ -60,7 +60,7 @@ public class LikeInfoContoller {
             // 이미 저장된 LikeInfo가 있으면 업데이트, 없으면 새로 생성
             if (existingLikeInfoOpt.isPresent()) {
                 LikeInfo existingLikeInfo = existingLikeInfoOpt.get();
-                existingLikeInfo.setLikeInfo(likeInfo);
+                existingLikeInfo.setLikeInfo(likeInfoDTO.getLikeInfo());
                 // 업데이트된 LikeInfo 저장
                 LikeInfo updatedLikeInfo = likeInfoRepository.save(existingLikeInfo);
                 if (updatedLikeInfo != null) {
@@ -73,7 +73,7 @@ public class LikeInfoContoller {
                 LikeInfo newLikeInfo = LikeInfo.builder()
                         .board(board)
                         .user(user)
-                        .likeInfo(likeInfo)
+                        .likeInfo(likeInfoDTO.getLikeInfo())
                         .build();
                 LikeInfo savedLikeInfo = likeInfoRepository.save(newLikeInfo);
                 if (savedLikeInfo != null) {
