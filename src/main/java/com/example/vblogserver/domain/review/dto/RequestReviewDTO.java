@@ -3,17 +3,17 @@ package com.example.vblogserver.domain.review.dto;
 public class RequestReviewDTO {
 
     //리뷰 작성 내용
-    private String content;
+    private String reviewContent;
 
     //평점
     private Number grade;
 
-    public String getContent() {
-        return content;
+    public String getReviewContent() {
+        return reviewContent;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setReviewContent(String reviewContent) {
+        this.reviewContent = reviewContent;
     }
 
     public Number getGrade() {
