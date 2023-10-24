@@ -231,27 +231,51 @@ public class ReviewController {
 
     //리뷰 삭제
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<Map<String, Object>> deleteReview(HttpServletRequest request, @PathVariable Long reviewId) {
+    public String deleteReview(HttpServletRequest request, @PathVariable Long reviewId) {
         Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
-
-        // 액세스 토큰이 존재하고 유효하다면
-        if (accessTokenOpt.isPresent() && jwtService.isTokenValid(accessTokenOpt.get())) {
-            // 리뷰 ID로 리뷰 조회
-            Review review = reviewRepository.findById(reviewId).orElse(null);
-
-            // 삭제할 리뷰가 없을 경우
-            if (review == null) {
-                return ResponseEntity.ok().body(Map.of("result", false, "reason", "삭제할 리뷰가 존재하지 않습니다"));
-            }
-
-            // 리뷰 삭제
-            reviewRepository.delete(review);
-            return ResponseEntity.ok().body(Map.of("result", true, "reason", "삭제 성공"));
-        } else {
-            // 유효하지 않은 토큰일 경우 405
-            return ResponseEntity.notFound().build();
+        // 액세스 토큰이 존재하지 않거나 유효하지 않다면 에러 응답 반환
+        if (accessTokenOpt.isEmpty() || !jwtService.isTokenValid(accessTokenOpt.get())) {
+            return "유효하지 않은 토큰입니다.";
         }
+        // 액세스 토큰에서 로그인 아이디 추출
+        Optional<String> loginIdOpt = jwtService.extractId(accessTokenOpt.get());
+
+        // 로그인 아이디가 존재하지 않으면 에러 응답 반환
+        if (loginIdOpt.isEmpty()) {
+            return "존재하지 않는 아이디입니다.";
+        }
+
+        // 리뷰 ID로 리뷰 조회
+        Review review = reviewRepository.findById(reviewId).orElse(null);
+
+        // 삭제할 리뷰가 없을 경우
+        if (review == null) {
+            return "삭제할 리뷰가 존재하지 않습니다";
+            //return ResponseEntity.ok().body(Map.of("result", false, "reason", "삭제할 리뷰가 존재하지 않습니다"));
+        }
+
+        // 리뷰 삭제
+        reviewRepository.delete(review);
+        // 삭제 후 board 테이블의 review_count 업데이트
+        Board board = review.getBoard();
+        List<Review> reviews = reviewRepository.findReviewsByBoard(board);
+        float sum = 0.0f;
+        if(!reviews.isEmpty()){
+            //모든 평점의 합산을 구함
+            for(Review reviewi : reviews){
+                sum+=reviewi.getGrade();
+            }
+            //합산된 평점을 나누어 총 평점을 구함
+            float avrGrade = sum / reviews.size();
+            // 두 번째 자리 이후를 버리고 소수점 첫 번째 자리까지만 저장
+            avrGrade = (float) (Math.floor(avrGrade * 10.0) / 10.0);
+            //구한 총 평점을 board 의 업데이트 grade에 업데이트
+            board.setReviewCount(reviews.size());
+            board.setGrade(avrGrade);
+            boardRepository.save(board);
+        }
+        return "삭제 성공";
     }
 }
