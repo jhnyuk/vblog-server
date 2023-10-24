@@ -1,9 +1,9 @@
 package com.example.vblogserver.domain.review.controller;
 
 import com.example.vblogserver.domain.board.entity.Board;
+import com.example.vblogserver.domain.board.repository.BoardRepository;
 import com.example.vblogserver.domain.board.service.BoardService;
 import com.example.vblogserver.domain.review.dto.RequestReviewDTO;
-import com.example.vblogserver.domain.review.dto.ReviewDTO;
 import com.example.vblogserver.domain.review.dto.SeleteReviewDTO;
 import com.example.vblogserver.domain.review.entity.Review;
 import com.example.vblogserver.domain.review.repository.ReviewRepository;
@@ -14,7 +14,6 @@ import com.example.vblogserver.global.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,15 +34,17 @@ public class ReviewController {
     private final ReviewRepository reviewRepository;
     private final JwtService jwtService;
     private final UserService userService;
+    private final BoardRepository boardRepository;
 
     @Autowired
-    public ReviewController(ReviewService reviewService, BoardService boardService, UserRepository userRepository, ReviewRepository reviewRepository, JwtService jwtService, UserService userService) {
+    public ReviewController(ReviewService reviewService, BoardService boardService, UserRepository userRepository, ReviewRepository reviewRepository, JwtService jwtService, UserService userService, BoardRepository boardRepository) {
         this.reviewService = reviewService;
         this.boardService = boardService;
         this.userRepository = userRepository;
         this.reviewRepository = reviewRepository;
         this.jwtService = jwtService;
         this.userService = userService;
+        this.boardRepository = boardRepository;
     }
 
     // 리뷰 조회 - 최신순
@@ -125,13 +126,7 @@ public class ReviewController {
 
         // 액세스 토큰이 존재하지 않거나 유효하지 않다면 에러 응답 반환
         if (accessTokenOpt.isEmpty() || !jwtService.isTokenValid(accessTokenOpt.get())) {
-            return "토큰 에러";
-            //return ResponseEntity.status(HttpStatus.OK).body("토큰 에러");
-            //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-            /*
-            // 유효하지 않은 토큰일 경우 405
-            return ResponseEntity.notFound().build();
-             */
+            return "유효하지 않은 토큰입니다.";
         }
 
         // 액세스 토큰에서 로그인 아이디 추출
@@ -140,17 +135,12 @@ public class ReviewController {
         // 로그인 아이디가 존재하지 않으면 에러 응답 반환
         if (loginIdOpt.isEmpty()) {
             return "존재하지 않는 아이디입니다.";
-            //return ResponseEntity.status(HttpStatus.OK).body("존재하지 않는 아이디입니다.");
-            //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
         Board board = boardService.getBoardById(boardId);
 
         if (board == null) {
-
             return "게시글이 존재하지 않습니다";
-            //return ResponseEntity.status(HttpStatus.OK).body("게시글이 존재하지 않습니다");
-            //return ResponseEntity.ok().body(Map.of("result", false, "reason", "게시글이 존재하지 않습니다"));
         }
 
         String userId = jwtService.extractId(accessTokenOpt.get()).orElse(null); // 액세스 토큰에서 사용자 ID 추출
@@ -167,30 +157,37 @@ public class ReviewController {
             user = userRepository.findByLoginId(userId).orElseThrow(() -> new IllegalArgumentException(userId + "을 찾을 수 없습니다"));
         } catch (IllegalArgumentException e) {
             return userId+"을 찾을 수 없습니다";
-            //return ResponseEntity.status(HttpStatus.OK).body(userId+"을 찾을 수 없습니다");
-            //return ResponseEntity.ok().body(Map.of("result", false, "reason", userId+"을 찾을 수 없습니다"));
         }
 
-        System.out.println(reviewContent);
+
         Review newReview = Review.builder()
                 .content(reviewContent)
                 .board(board)
                 .user(user)
                 .grade(grade)
                 .build();
-        System.out.println("16");
         Review saveReview = reviewRepository.save(newReview);
         //리뷰 저장 성공 시 true, 실패 시 false
         if(saveReview != null){
-            System.out.println("리뷰저장성공");
+            List<Review> reviews = reviewRepository.findReviewsByBoard(board);
+            float sum = 0.0f;
+            if(!reviews.isEmpty()){
+                //모든 평점의 합산을 구함
+                for(Review review : reviews){
+                    sum+=review.getGrade();
+                }
+                //합산된 평점을 나누어 총 평점을 구함
+                float avrGrade = sum / reviews.size();
+                // 두 번째 자리 이후를 버리고 소수점 첫 번째 자리까지만 저장
+                avrGrade = (float) (Math.floor(avrGrade * 10.0) / 10.0);
+                //구한 총 평점을 board 의 업데이트 grade에 업데이트
+                board.setReviewCount(reviews.size());
+                board.setGrade(avrGrade);
+                boardRepository.save(board);
+            }
             return "저장성공";
-            //return ResponseEntity.status(HttpStatus.OK).body("저장성공");
-            //return ResponseEntity.ok().body(Map.of("result", true, "reason", "저장 성공"));
         } else{
-            System.out.println("리뷰저장실패");
             return "저장실패";
-            //return ResponseEntity.status(HttpStatus.OK).body("저장실패");
-            //return ResponseEntity.ok().body(Map.of("result", false, "reason", "저장 실패"));
         }
 
     }

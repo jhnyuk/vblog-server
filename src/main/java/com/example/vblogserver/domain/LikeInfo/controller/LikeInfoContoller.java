@@ -2,6 +2,7 @@ package com.example.vblogserver.domain.LikeInfo.controller;
 
 import com.example.vblogserver.domain.LikeInfo.dto.LikeInfoDTO;
 import com.example.vblogserver.domain.board.entity.Board;
+import com.example.vblogserver.domain.board.repository.BoardRepository;
 import com.example.vblogserver.domain.board.service.BoardService;
 import com.example.vblogserver.domain.LikeInfo.entity.LikeInfo;
 import com.example.vblogserver.domain.LikeInfo.repository.LikeInfoRepository;
@@ -23,11 +24,15 @@ public class LikeInfoContoller {
     private final UserRepository userRepository;
     private final BoardService boardService;
 
-    public LikeInfoContoller(LikeInfoRepository likeInfoRepository, JwtService jwtService, UserRepository userRepository, BoardService boardService) {
+    private final BoardRepository boardRepository;
+
+
+    public LikeInfoContoller(LikeInfoRepository likeInfoRepository, JwtService jwtService, UserRepository userRepository, BoardService boardService, BoardRepository boardRepository) {
         this.likeInfoRepository = likeInfoRepository;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.boardService = boardService;
+        this.boardRepository = boardRepository;
     }
 
     /*
@@ -60,17 +65,28 @@ public class LikeInfoContoller {
 
             // 이미 저장된 LikeInfo가 있으면 업데이트, 없으면 새로 생성
             if (existingLikeInfoOpt.isPresent()) {
+                // 이미 저장된 LikeInfo의 값이 좋아요(true) 인지 싫어요(false) 인지를 확인하여
+                // true, false 에 따라 board 테이블의 like_count와 dis_like_count 을 재카운팅하여 업데이트
+                System.out.println("싫어요 existingLikeInfoOpt.get().getLikeInfo() : " + existingLikeInfoOpt.get().getLikeInfo());
                 LikeInfo existingLikeInfo = existingLikeInfoOpt.get();
                 existingLikeInfo.setLikeInfo(likeInfoDTO.getLikeInfo());
                 // 업데이트된 LikeInfo 저장
                 LikeInfo updatedLikeInfo = likeInfoRepository.save(existingLikeInfo);
                 if (updatedLikeInfo != null) {
+                    int likeCount = likeInfoRepository.countByLikeInfoAndBoard(true, board);
+                    int disLikeCount = likeInfoRepository.countByLikeInfoAndBoard(false, board);
+                    System.out.println(board.getId());
+                    board.setLikeCount(likeCount);
+                    System.out.println("likeCount : "+likeCount);
+                    board.setDisLikeCount(disLikeCount);
+                    System.out.println("disLikeCount : "+disLikeCount);
+                    boardRepository.save(board);
                     return "업데이트 성공";
-                    //return ResponseEntity.ok().body(Map.of("result", true, "reason", "업데이트 성공"));
                 } else {
                     return "업데이트 실패";
-                    //return ResponseEntity.ok().body(Map.of("result", false, "reason", "업데이트 실패"));
                 }
+
+
             } else {
                 // 새로운 LikeInfo 생성 및 저장
                 LikeInfo newLikeInfo = LikeInfo.builder()
@@ -80,16 +96,21 @@ public class LikeInfoContoller {
                         .build();
                 LikeInfo savedLikeInfo = likeInfoRepository.save(newLikeInfo);
                 if (savedLikeInfo != null) {
+                    int likeCount = likeInfoRepository.countByLikeInfoAndBoard(true, board);
+                    int disLikeCount = likeInfoRepository.countByLikeInfoAndBoard(false, board);
+                    System.out.println(board.getId());
+                    board.setLikeCount(likeCount);
+                    System.out.println("likeCount : "+likeCount);
+                    board.setDisLikeCount(disLikeCount);
+                    System.out.println("disLikeCount : "+disLikeCount);
+                    boardRepository.save(board);
                     return "저장 성공";
-                    //return ResponseEntity.ok().body(Map.of("result", true, "reason", "저장 성공"));
                 } else {
                     return "저장 실패";
-                    //return ResponseEntity.ok().body(Map.of("result", false, "reason", "저장 실패"));
                 }
             }
         } else {
             return "유효하지 않은 액세스 토큰입니다";
-            //return ResponseEntity.ok().body(Map.of("result", false, "reason", "유효하지 않은 액세스 토큰입니다."));
         }
     }
 
