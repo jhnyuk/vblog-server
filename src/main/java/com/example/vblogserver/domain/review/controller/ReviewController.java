@@ -210,7 +210,7 @@ public class ReviewController {
                 //return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"수정할 리뷰가 존재하지 않습니다\"}");
             }
             String newReviewContent = updateReview.get("reviewContent");
-            float newGrade = Float.parseFloat(updateReview.get("Grade"));
+            float newGrade = Float.parseFloat(updateReview.get("grade"));
 
             // 수정된 리뷰 내용+평점으로 저장
             review.setContent(newReviewContent);
