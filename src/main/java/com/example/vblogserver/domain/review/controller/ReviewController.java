@@ -194,7 +194,7 @@ public class ReviewController {
 
     //리뷰 수정
     @PutMapping("/{reviewId}")
-    public ResponseEntity<Map<String, Object>> updateReview(HttpServletRequest request, @PathVariable Long reviewId,  @RequestBody Map<String, String> updateReview) {
+    public ResponseEntity<Map<String, Object>> updateReview(HttpServletRequest request, @PathVariable Long reviewId, @RequestBody RequestReviewDTO requestReviewDTO) {
         Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "application/text;charset=UTF-8");
@@ -209,8 +209,8 @@ public class ReviewController {
                 return ResponseEntity.ok().body(Map.of("result", false, "reason", "수정할 리뷰가 존재하지 않습니다"));
                 //return ResponseEntity.ok("{\"result\" : false,\"reason\" : \"수정할 리뷰가 존재하지 않습니다\"}");
             }
-            String newReviewContent = updateReview.get("reviewContent");
-            float newGrade = Float.parseFloat(updateReview.get("grade"));
+            String newReviewContent = requestReviewDTO.getReviewContent();
+            float newGrade = Float.parseFloat(requestReviewDTO.getGrade().toString());
 
             // 수정된 리뷰 내용+평점으로 저장
             review.setContent(newReviewContent);
