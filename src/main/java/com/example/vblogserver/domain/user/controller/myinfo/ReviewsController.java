@@ -40,14 +40,14 @@ public class ReviewsController {
 	// TODO: 최신순, 인기순
 	@GetMapping("/blog")
 	public ResponseEntity<PageResponseDto<ReviewDTO>> getUserBlogReviews(HttpServletRequest request,
-																		 @RequestParam(defaultValue = "0") int page) {
-		return getUserReviewsByCategory(request, "blog", PageRequest.of(page, 5));
+																		 @RequestParam(defaultValue = "1") int page) {
+		return getUserReviewsByCategory(request, "blog", PageRequest.of(page - 1, 5));
 	}
 
 	@GetMapping("/vlog")
 	public ResponseEntity<PageResponseDto<ReviewDTO>> getUserVlogReviews(HttpServletRequest request,
-		@RequestParam(defaultValue = "0") int page) {
-		return getUserReviewsByCategory(request, "vlog", PageRequest.of(page, 5));
+		@RequestParam(defaultValue = "1") int page) {
+		return getUserReviewsByCategory(request, "vlog", PageRequest.of(page - 1, 5));
 	}
 
 	private ResponseEntity<PageResponseDto<ReviewDTO>> getUserReviewsByCategory(HttpServletRequest request, String category,
