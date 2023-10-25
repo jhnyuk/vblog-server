@@ -39,14 +39,16 @@ public class ReviewsController {
 
 	// TODO: 최신순, 인기순
 	@GetMapping("/blog")
-	public ResponseEntity<PageResponseDto<ReviewDTO>> getUserBlogReviews(HttpServletRequest request,
-																		 @RequestParam(defaultValue = "1") int page) {
+	public ResponseEntity<PageResponseDto<ReviewDTO>> getUserBlogReviews(HttpServletRequest request, @RequestParam(defaultValue = "1") int page) {
+		page = Math.max(page, 1); // 페이지가 1보다 작으면 1로 설정
+
 		return getUserReviewsByCategory(request, "blog", PageRequest.of(page - 1, 5));
 	}
 
 	@GetMapping("/vlog")
-	public ResponseEntity<PageResponseDto<ReviewDTO>> getUserVlogReviews(HttpServletRequest request,
-		@RequestParam(defaultValue = "1") int page) {
+	public ResponseEntity<PageResponseDto<ReviewDTO>> getUserVlogReviews(HttpServletRequest request, @RequestParam(defaultValue = "1") int page) {
+		page = Math.max(page, 1); // 페이지가 1보다 작으면 1로 설정
+
 		return getUserReviewsByCategory(request, "vlog", PageRequest.of(page - 1, 5));
 	}
 
