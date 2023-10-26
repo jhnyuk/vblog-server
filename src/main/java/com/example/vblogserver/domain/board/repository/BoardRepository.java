@@ -36,4 +36,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findByFolderAndCategoryG_CategoryNameIgnoreCase(Folder folder, String type, PageRequest pageRequest);
 
     List<Board> findByFolder(Folder folder);
+    // 유저가 즐겨찾는 카테고리에 해당되는 게시글 조회
+    List<Board> findByCategoryM(CategoryM categoryM);
 }

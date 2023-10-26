@@ -12,7 +12,8 @@ public class CategoryMDTO {
     }
 
     public CategoryMDTO(String categoryName) {
-        this.categoryName = covCategory(categoryName);
+        //this.categoryName = covCategory(categoryName);
+        this.categoryName = categoryName;
     }
 
     private String covCategory(String CategoryName){
