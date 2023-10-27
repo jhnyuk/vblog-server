@@ -15,7 +15,7 @@ public class CategoryMInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args){
-
+        /*
         String[] categoryM_name = {"여행","게임","건강","맛집","방송","뷰티"};
 
         for(int i=0; i<categoryM_name.length; i++) {
@@ -23,5 +23,7 @@ public class CategoryMInitializer implements CommandLineRunner {
             categoryM.setCategoryName(categoryM_name[i]);
             categoryMRepository.save(categoryM);
         }
+
+         */
     }
 }
