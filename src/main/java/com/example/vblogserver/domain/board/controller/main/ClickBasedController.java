@@ -66,9 +66,12 @@ public class ClickBasedController {
     }
 
     @GetMapping("/blog/userBase")
-    public ResponseEntity<Map<String, Object>> getUserBasedBlogList(HttpServletRequest request) {
-        return null;
+    public List<MainBoardDTO> getUserBasedBlogList(HttpServletRequest request) {
+        CategoryG categoryG = new CategoryG();
+        categoryG.setId(2L);
+        return getUserBasedBoards(request, categoryG);
     }
+
     //사용자가 클릭한 게시글의 카테고리 중 가장 많이 조회된 게시글의 카테고리 TOP2 조회
     public List<MainBoardDTO> getUserBasedBoards(HttpServletRequest request, CategoryG categoryG){
     //public String getUserBasedBoards(HttpServletRequest request, CategoryG categoryG){
@@ -144,7 +147,7 @@ public class ClickBasedController {
         for(String uniquecategory : uniqueCategoriesList){
             CategoryM categoryM = new CategoryM();
             categoryM.setId(covCategory(uniquecategory));
-            userBasedBoards = boardRepository.findByCategoryM(categoryM);
+            userBasedBoards = boardRepository.findByCategoryGAndCategoryM(categoryG, categoryM);
 
         }
 
