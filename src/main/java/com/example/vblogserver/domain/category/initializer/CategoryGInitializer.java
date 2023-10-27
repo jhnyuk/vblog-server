@@ -18,7 +18,7 @@ public class CategoryGInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... arg){
-
+        /*
         String[] categoryG_name = {"vlog","blog"};
 
         for(int i=0; i<categoryG_name.length; i++) {
@@ -26,6 +26,8 @@ public class CategoryGInitializer implements CommandLineRunner {
             categoryG.setCategoryName(categoryG_name[i]);
             categoryGRepository.save(categoryG);
         }
+
+         */
 
     }
 }
