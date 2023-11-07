@@ -86,6 +86,7 @@ public class ReviewsController {
 						ReviewDTO reviewDTO = new ReviewDTO();
 						reviewDTO.setReviewId(review.getId());
 						reviewDTO.setContent(review.getContent());
+						reviewDTO.setGrade(review.getGrade());
 						reviewDTO.setCreatedDate(review.getCreatedDate());
 
 						Board board = review.getBoard();
