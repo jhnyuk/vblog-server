@@ -18,6 +18,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
 
-    Set<OptionType> findOptionsByLoginId(String loginId);
 
 }

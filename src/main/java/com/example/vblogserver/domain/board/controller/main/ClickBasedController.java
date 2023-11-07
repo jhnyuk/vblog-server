@@ -81,33 +81,31 @@ public class ClickBasedController {
         }
 
         User user = userRepository.findByLoginId(loginIdOpt.get()).orElseThrow(() -> new RuntimeException("User not found"));
-        System.out.println(1);
+
         // 특정 사용자가 클릭한 게시글 리스트 조회
         List<Click> clicksByUser = clickRepository.findByUser(user);
-        System.out.println(2);
+
         // 각 게시글의 categoryM을 count하기 위한 Map을 생성
         Map<CategoryM, Long> categoryCountMap = clicksByUser.stream()
                 .map(Click::getBoard)
                 .map(Board::getCategoryM)
                 .collect(Collectors.groupingBy(categoryM -> categoryM, Collectors.counting()));
-        System.out.println(3);
+
         // CategoryM을 count 하여 내림차순으로 정렬
         List<Map.Entry<CategoryM, Long>> sortedCategories = categoryCountMap.entrySet().stream()
                 .sorted((entry1, entry2) -> Long.compare(entry2.getValue(), entry1.getValue()))
                 .collect(Collectors.toList());
-        System.out.println(4);
 
         // userCategories 리스트와 signupCategory 리스트를 합칠 리스트를 생성
         List<String> combinedCategories = new ArrayList<>();
-        System.out.println(5);
+
         // 상위 2개의 카테고리 조회
         List<CategoryMDTO> userCategories;
-        System.out.println(6);
+
         // 조회된 카테고리가 2개 이상인 경우
-        if (sortedCategories.size() >= 2) {
+        if (sortedCategories.size() >= 1) {
             // 상위 2개의 카테고리를 선택
             userCategories = sortedCategories.stream()
-                    .limit(2)
                     .map(entry -> new CategoryMDTO(entry.getKey().getCategoryName()))
                     .collect(Collectors.toList());
             // userCategories 리스트가 null이 아니라면 합칠 리스트에 추가
@@ -116,20 +114,14 @@ public class ClickBasedController {
                     combinedCategories.add(categoryMDTO.getCategoryName());
             }
         }
-        System.out.println(7);
-
         // 회원가입 시 사용자가 선택한 카테고리 조회
-        Set<OptionType> signupCategory = userRepository.findOptionsByLoginId(user.getLoginId());
-        System.out.println(8);
+        Set<OptionType> signupCategory = user.getOptions();
+
         List<String> signupCategoryStrings = signupCategory.stream()
                 .map(OptionType::name) // OptionType을 문자열로 변환
                 .collect(Collectors.toList());
-        System.out.println(9);
         // 클릭한 게시글의 카테고리에서 사용자가 선택한 카테고리도 추가
         combinedCategories.addAll(signupCategoryStrings);
-        System.out.println(10);
-
-        System.out.println("combinedCategories : "+combinedCategories);
         // 중복 카테고리 제거
         List<String> uniqueCategoriesList = combinedCategories.stream()
                 .distinct()
