@@ -8,27 +8,18 @@ import com.example.vblogserver.domain.category.entity.CategoryG;
 import com.example.vblogserver.domain.category.entity.CategoryM;
 import com.example.vblogserver.domain.click.entity.Click;
 import com.example.vblogserver.domain.click.repository.ClickRepository;
-import com.example.vblogserver.domain.user.dto.PageResponseDto;
+import com.example.vblogserver.domain.user.entity.OptionType;
 import com.example.vblogserver.domain.user.entity.User;
-import com.example.vblogserver.domain.user.entity.UserOption;
-import com.example.vblogserver.domain.user.repository.UserOptionRepository;
 import com.example.vblogserver.domain.user.repository.UserRepository;
 import com.example.vblogserver.global.jwt.service.JwtService;
-import com.example.vblogserver.global.jwt.util.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.vblogserver.domain.board.dto.CategoryMDTO;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -39,26 +30,26 @@ public class ClickBasedController {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    private final UserOptionRepository userOptionRepository;
 
 
-    public ClickBasedController(ClickRepository clickRepository, BoardRepository boardRepository, BoardService boardService, JwtService jwtService, UserRepository userRepository, UserOptionRepository userOptionRepository) {
+    public ClickBasedController(ClickRepository clickRepository, BoardRepository boardRepository, BoardService boardService, JwtService jwtService, UserRepository userRepository) {
         this.clickRepository = clickRepository;
         this.boardRepository = boardRepository;
         this.boardService = boardService;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
-        this.userOptionRepository = userOptionRepository;
     }
 
     public List<Click> getClicksByUserId(User user) {
         return clickRepository.findByUser(user);
     }
 
+
+
     //사용자 맞춤 추천 게시글 조회 (게시글 클릭 정보 + 회원가입 시 입력받은 카테고리를 기반으로 추천 게시글 조회)
     @GetMapping("/vlog/userBase")
     public List<MainBoardDTO> getUserBasedVlogList(HttpServletRequest request) {
-    //public String getUserBasedVlogList(HttpServletRequest request) {
+        //public String getUserBasedVlogList(HttpServletRequest request) {
         CategoryG categoryG = new CategoryG();
         categoryG.setId(1L);
         return getUserBasedBoards(request, categoryG);
@@ -73,31 +64,26 @@ public class ClickBasedController {
     }
 
     //사용자가 클릭한 게시글의 카테고리 중 가장 많이 조회된 게시글의 카테고리 TOP2 조회
-    public List<MainBoardDTO> getUserBasedBoards(HttpServletRequest request, CategoryG categoryG){
-    //public String getUserBasedBoards(HttpServletRequest request, CategoryG categoryG){
-        // 액세스 토큰 추출
+
+    public List<MainBoardDTO> getUserBasedBoards(HttpServletRequest request, CategoryG categoryG) {
+
         Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
 
-        // 액세스 토큰이 존재하지 않거나 유효하지 않다면 에러 응답 반환
         if (accessTokenOpt.isEmpty() || !jwtService.isTokenValid(accessTokenOpt.get())) {
-            //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            return null;
         }
 
-        // 액세스 토큰에서 로그인 아이디 추출
         Optional<String> loginIdOpt = jwtService.extractId(accessTokenOpt.get());
 
-        // 로그인 아이디가 존재하지 않으면 에러 응답 반환
+
         if (loginIdOpt.isEmpty()) {
-            //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            return null;
         }
 
-        String userId = loginIdOpt.get();
-
-        User owner = userRepository.findByLoginId(userId)
-                .orElseThrow(() -> new NotFoundException(userId + "을 찾을 수 없습니다"));
+        User user = userRepository.findByLoginId(loginIdOpt.get()).orElseThrow(() -> new RuntimeException("User not found"));
 
         // 특정 사용자가 클릭한 게시글 리스트 조회
-        List<Click> clicksByUser = clickRepository.findByUser(owner);
+        List<Click> clicksByUser = clickRepository.findByUser(user);
 
         // 각 게시글의 categoryM을 count하기 위한 Map을 생성
         Map<CategoryM, Long> categoryCountMap = clicksByUser.stream()
@@ -110,33 +96,32 @@ public class ClickBasedController {
                 .sorted((entry1, entry2) -> Long.compare(entry2.getValue(), entry1.getValue()))
                 .collect(Collectors.toList());
 
-
         // userCategories 리스트와 signupCategory 리스트를 합칠 리스트를 생성
         List<String> combinedCategories = new ArrayList<>();
 
         // 상위 2개의 카테고리 조회
         List<CategoryMDTO> userCategories;
+
         // 조회된 카테고리가 2개 이상인 경우
-        if (sortedCategories.size() >= 2) {
-            // 상위 2개의 카테고리를 선택합니다.
+        if (sortedCategories.size() >= 1) {
+            // 상위 2개의 카테고리를 선택
             userCategories = sortedCategories.stream()
-                    .limit(2)
                     .map(entry -> new CategoryMDTO(entry.getKey().getCategoryName()))
                     .collect(Collectors.toList());
             // userCategories 리스트가 null이 아니라면 합칠 리스트에 추가
             if (userCategories != null) {
-                for(CategoryMDTO categoryMDTO : userCategories)
-                combinedCategories.add(categoryMDTO.getCategoryName());
+                for (CategoryMDTO categoryMDTO : userCategories)
+                    combinedCategories.add(categoryMDTO.getCategoryName());
             }
         }
-
         // 회원가입 시 사용자가 선택한 카테고리 조회
-        List<UserOption> signupCategory = userOptionRepository.findByUserId(owner.getId());
-        // 클릭한 게시글의 카테고리에서 사용자가 선택한 카테고리도 추가
-        for(UserOption userOption : signupCategory){
-            combinedCategories.add(String.valueOf(userOption.getOption().getType()));
-        }
+        Set<OptionType> signupCategory = user.getOptions();
 
+        List<String> signupCategoryStrings = signupCategory.stream()
+                .map(OptionType::name) // OptionType을 문자열로 변환
+                .collect(Collectors.toList());
+        // 클릭한 게시글의 카테고리에서 사용자가 선택한 카테고리도 추가
+        combinedCategories.addAll(signupCategoryStrings);
         // 중복 카테고리 제거
         List<String> uniqueCategoriesList = combinedCategories.stream()
                 .distinct()
@@ -144,7 +129,7 @@ public class ClickBasedController {
 
         List<Board> userBasedBoards = new ArrayList<>();
 
-        for(String uniquecategory : uniqueCategoriesList){
+        for (String uniquecategory : uniqueCategoriesList) {
             CategoryM categoryM = new CategoryM();
             categoryM.setId(covCategory(uniquecategory));
             userBasedBoards = boardRepository.findByCategoryGAndCategoryM(categoryG, categoryM);
@@ -160,6 +145,7 @@ public class ClickBasedController {
 
 
         return clientDataDTOs;
+
     }
 
     private Long covCategory(String CategoryName){

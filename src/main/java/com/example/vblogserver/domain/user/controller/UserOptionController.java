@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class UserOptionController {
@@ -28,24 +29,30 @@ public class UserOptionController {
     }
 
     @PostMapping("/options")
-    public ResponseEntity<Map<String, Object>> saveUserOptions(HttpServletRequest request, @RequestBody List<OptionType> options) {
+    public ResponseEntity<List<Object>> saveUserOptions(HttpServletRequest request, @RequestBody List<OptionType> options) {
         String token = request.getHeader("Authorization").substring(7);
         String loginId = jwtService.extractId(token)
                 .orElseThrow(() -> new RuntimeException("Invalid access token"));
 
         Map<String, Object> response = userOptionService.saveUserOptions(loginId, options);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(mapToList(response));
     }
 
     @PatchMapping("/myinfo/options")
-    public ResponseEntity<Map<String, Object>> updateUserOptions(HttpServletRequest request, @RequestBody List<OptionType> options){
+    public ResponseEntity<List<Object>> updateUserOptions(HttpServletRequest request, @RequestBody List<OptionType> options){
         String token = request.getHeader("Authorization").substring(7);
         String loginId = jwtService.extractId(token)
                 .orElseThrow(() -> new RuntimeException("Invalid access token"));
 
         Map<String, Object> response = userOptionService.updateUserOptions(loginId, options);
+        return ResponseEntity.ok(mapToList(response));
+    }
 
-        return ResponseEntity.ok(response);
+    public List<Object> mapToList(Map<String, Object> results){
+        List<Object> response = results.values().stream()
+                .filter(value -> value instanceof List)
+                .flatMap(value -> ((List<String>) value).stream())
+                .collect(Collectors.toCollection(ArrayList::new));
+        return response;
     }
 }
