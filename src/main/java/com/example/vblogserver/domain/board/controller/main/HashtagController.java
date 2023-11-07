@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,16 +25,39 @@ public class HashtagController {
 
     @GetMapping("/vlog/hashtags")
     public List<String> searchVlog() {
+        List<String> hashtags = new ArrayList<>();
+        hashtags.add("세계여행");
+        hashtags.add("빵지순례");
+        hashtags.add("디즈니플러스");
+        hashtags.add("애견");
+        hashtags.add("놀면뭐하니");
+        hashtags.add("다이어트운동");
+        hashtags.add("반드시 가야하는 여행지");
+        return hashtags;
+
+        /*
         CategoryG categoryG = new CategoryG();
         categoryG.setId(1L);
         return searchHashtags(categoryG);
+         */
     }
 
     @GetMapping("/blog/hashtags")
     public List<String> searchBlog() {
+        List<String> hashtags = new ArrayList<>();
+        hashtags.add("세계여행");
+        hashtags.add("빵지순례");
+        hashtags.add("디즈니플러스");
+        hashtags.add("애견");
+        hashtags.add("놀면뭐하니");
+        hashtags.add("다이어트운동");
+        hashtags.add("반드시 가야하는 여행지");
+        return hashtags;
+        /*
         CategoryG categoryG = new CategoryG();
         categoryG.setId(2L);
         return searchHashtags(categoryG);
+         */
     }
 
     public List<String> searchHashtags(CategoryG vblog){
