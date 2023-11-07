@@ -53,71 +53,39 @@ public class BookmarkController {
     public ResponseEntity<Map<String, Object>> clickOnBookMark(HttpServletRequest request,
         @PathVariable Long contentId,
         @PathVariable Long folderId) {
+        Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
+
+        if (accessTokenOpt.isEmpty() || !jwtService.isTokenValid(accessTokenOpt.get())) {
+            return null;
+        }
+
+        Optional<String> loginIdOpt = jwtService.extractId(accessTokenOpt.get());
+
+
+        if (loginIdOpt.isEmpty()) {
+            return null;
+        }
+
+        User user = userRepository.findByLoginId(loginIdOpt.get()).orElseThrow(() -> new RuntimeException("User not found"));
+
         Board board = boardRepository.findById(contentId)
                 .orElseThrow(() -> new NotFoundException("Board not found"));
 
         Folder folder = folderRepository.findById(folderId)
                 .orElseThrow(() -> new NotFoundException("Folder not found"));
 
-        board.setFolder(folder);
 
-        boardRepository.save(board);
-
-        return ClickBookMark(request, contentId, folderId);
-    }
-
-    public ResponseEntity<Map<String, Object>> ClickBookMark(HttpServletRequest request, Long contentId, Long folderId) {
-        Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Content-Type", "application/json;charset=UTF-8");
-
-        // 액세스 토큰이 존재하고 유효하다면
-        if (accessTokenOpt.isPresent() && jwtService.isTokenValid(accessTokenOpt.get())) {
-            String userId = jwtService.extractId(accessTokenOpt.get()).orElse(null); // 액세스 토큰에서 사용자 ID 추출
-            //BoardID 로 게시글 조회
-            Board board = boardService.getBoardById(contentId);
-
-            if (board == null) {
-                return ResponseEntity.ok().body(Map.of("result", false, "reason", "게시글이 존재하지 않습니다"));
-            }
-
-            //LoginID 로 userID 조회
-            User user;
-            try {
-                user = userRepository.findByLoginId(userId).orElseThrow(() -> new IllegalArgumentException(userId + "을 찾을 수 없습니다"));
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity.ok().body(Map.of("result", false, "reason", userId+"을 찾을 수 없습니다"));
-            }
-
-            Optional<Folder> optFolder = folderRepository.findById(folderId);
-
-            if (!optFolder.isPresent()) {
-                return ResponseEntity.ok().body(Map.of("result", false,"reason", "폴더가 존재하지 않습니다."));
-            }
-
-            if (!optFolder.get().getUser().getId().equals(user.getId())) {
-                return ResponseEntity.ok().body(Map.of("result", false,"reason", "폴더에 접근 권한이 없습니다."));
-            }
-
-            Bookmark newBookmark = Bookmark.builder()
-                .board(board)
-                .user(user)
-                .folder(optFolder.get())
-                .build();
-
-                Bookmark saveBookMark = bookmarkRepository.save(newBookmark);
-
-                //찜 저장 성공 시 true, 실패 시 false
-                if (saveBookMark != null) {
-                    return ResponseEntity.ok().body(Map.of("result", true, "reason", "저장 성공"));
-                } else {
-                    return ResponseEntity.ok().body(Map.of("result", false, "reason", "저장 실패"));
-                }
+        Bookmark saveBookmark = new Bookmark();
+        saveBookmark.setFolder(folder);
+        saveBookmark.setUser(user);
+        saveBookmark.setBoard(board);
+        Bookmark resultSave = bookmarkRepository.save(saveBookmark);
+        //찜 저장 성공 시 true, 실패 시 false
+        if (resultSave != null) {
+            return ResponseEntity.ok().body(Map.of("result", true, "reason", "저장 성공"));
         } else {
-            return ResponseEntity.ok().body(Map.of("result", false, "reason", "유효하지 않은 액세스 토큰입니다."));
+            return ResponseEntity.ok().body(Map.of("result", false, "reason", "저장 실패"));
         }
-
     }
-
 
 }
