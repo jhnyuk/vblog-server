@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +29,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 	@Value("${jwt.access.expiration}")
 	private String accessTokenExpiration;
 
+	@Transactional
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 										Authentication authentication) throws IOException {
@@ -48,6 +50,9 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 					responseBody.put("imageUrl", user.getImageUrl());
 					responseBody.put("username", user.getUsername());
+
+					responseBody.put("isSelected", !user.getOptions().isEmpty());
+					responseBody.put("category", user.getOptions());
 
 					Gson gson = new GsonBuilder().serializeNulls().create();
 					String jsonResponseBody = gson.toJson(responseBody);
