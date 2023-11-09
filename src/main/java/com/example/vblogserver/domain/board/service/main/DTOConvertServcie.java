@@ -38,8 +38,6 @@ public class DTOConvertServcie {
         if (board.getReviewCount() != null) {
             clientDataDTO.setReview(board.getReviewCount());
         }
-        System.out.println("convertToClientDataDTO() : "+board.getId());
-
 
         return clientDataDTO;
     }
