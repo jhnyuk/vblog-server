@@ -78,7 +78,7 @@ public class SearchController {
 
             for (String hashtag : hashtags) {
                 if (hashtag.contains(keyword)) {
-                    matchingHashtags.add("#" + hashtag);
+                    matchingHashtags.add(hashtag);
                 }
             }
         }
