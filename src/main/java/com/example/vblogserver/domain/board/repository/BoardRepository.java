@@ -31,7 +31,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     List<Board> findByIdInAndCategoryG_CategoryNameIgnoreCase(List<Long> ids, String categoryName);
 
-    List<Board> findByHashtagContainingOrDescriptionContainingOrTitleContaining(String hashtag, String description, String title);
+    //검색용.
+    List<Board> findByHashtagContainingOrderByCreatedDateDesc(String hashtag);
 
     Page<Board> findByFolderAndCategoryG_CategoryNameIgnoreCase(Folder folder, String type, PageRequest pageRequest);
 
