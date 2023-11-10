@@ -29,7 +29,7 @@ public class HashtagController {
         hashtags.add("세계여행");
         hashtags.add("빵지순례");
         hashtags.add("디즈니플러스");
-        hashtags.add("애견");
+        hashtags.add("카페");
         hashtags.add("놀면뭐하니");
         hashtags.add("다이어트운동");
         hashtags.add("반드시 가야하는 여행지");
@@ -45,13 +45,13 @@ public class HashtagController {
     @GetMapping("/blog/hashtags")
     public List<String> searchBlog() {
         List<String> hashtags = new ArrayList<>();
-        hashtags.add("세계여행");
-        hashtags.add("빵지순례");
+        hashtags.add("내돈내산");
+        hashtags.add("지락실2");
         hashtags.add("디즈니플러스");
-        hashtags.add("애견");
-        hashtags.add("놀면뭐하니");
+        hashtags.add("연인");
+        hashtags.add("나혼자산다");
         hashtags.add("다이어트운동");
-        hashtags.add("반드시 가야하는 여행지");
+        hashtags.add("리그오브레전드");
         return hashtags;
         /*
         CategoryG categoryG = new CategoryG();
