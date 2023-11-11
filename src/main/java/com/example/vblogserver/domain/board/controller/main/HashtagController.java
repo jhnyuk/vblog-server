@@ -26,7 +26,7 @@ public class HashtagController {
     @GetMapping("/vlog/hashtags")
     public List<String> searchVlog() {
         List<String> hashtags = new ArrayList<>();
-        hashtags.add("세계여행");
+        hashtags.add("여행");
         hashtags.add("빵지순례");
         hashtags.add("디즈니플러스");
         hashtags.add("카페");
