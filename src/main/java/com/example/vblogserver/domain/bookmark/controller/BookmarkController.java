@@ -1,6 +1,6 @@
 package com.example.vblogserver.domain.bookmark.controller;
 
-import com.example.vblogserver.domain.board.dto.SaveBookmarkDTO;
+import com.example.vblogserver.domain.bookmark.dto.SaveBookmarkDTO;
 import com.example.vblogserver.domain.board.entity.Board;
 import com.example.vblogserver.domain.board.repository.BoardRepository;
 import com.example.vblogserver.domain.board.service.BoardService;
@@ -61,7 +61,7 @@ public class BookmarkController {
                 .orElseThrow(() -> new NotFoundException("게시글이 존재하지 않습니다"));
 
         //폴더 유효성 검증
-        Folder folder = folderRepository.findByNameAndUserAndType(saveBookmarkDTO.getFolderName(), user, board.getCategoryG().getCategoryName());
+        Folder folder = folderRepository.findByNameAndUserAndType(saveBookmarkDTO.getName(), user, board.getCategoryG().getCategoryName());
         if(folder == null) return "존재하지 않는 폴더입니다";
 
         //중복된 데이터가 있는 경우

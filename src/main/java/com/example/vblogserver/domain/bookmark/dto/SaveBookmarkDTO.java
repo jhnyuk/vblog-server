@@ -1,14 +1,14 @@
-package com.example.vblogserver.domain.board.dto;
+package com.example.vblogserver.domain.bookmark.dto;
 
 public class SaveBookmarkDTO {
     // 폴더 이름
-    private String folderName;
+    private String name;
     // 게시글 ID
     private Long contentId;
 
 
-    public String getFolderName() {
-        return folderName;
+    public String getName() {
+        return name;
     }
 
     public Long getContentId() {
