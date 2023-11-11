@@ -42,7 +42,7 @@ public class FolderController {
     3. /folders/blog : 마이페이지에서 블로그 폴더 생성
      */
     @PostMapping("/folders")
-    public ResponseEntity<FolderResponseDTO> createFolder(HttpServletRequest request, @RequestBody Folder folder) {
+    public ResponseEntity<FolderResponseDTO> createFolder(HttpServletRequest request, @RequestBody Folder folder, @RequestBody List<Long> contentId) {
         // 액세스 토큰 추출
         Optional<String> accessTokenOpt = jwtService.extractAccessToken(request);
 
@@ -72,6 +72,10 @@ public class FolderController {
 
         folder.setUser(owner);
 
+        // contentId로 Bookmark를 조회하여 folder에 추가
+        List<Bookmark> bookmarks = bookmarkRepository.findByIdIn(contentId);
+        folder.setBookmarks(bookmarks);
+
         Folder createdFolder = folderRepository.save(folder);
 
         FolderResponseDTO response = convertToDto(createdFolder);
@@ -80,16 +84,17 @@ public class FolderController {
     }
 
     @PostMapping("/folders/vlog")
-    public ResponseEntity<FolderResponseDTO> createVlogFolder(HttpServletRequest request, @RequestBody Folder folder) {
+    public ResponseEntity<FolderResponseDTO> createVlogFolder(HttpServletRequest request, @RequestBody Folder folder, @RequestBody List<Long> contentId) {
         folder.setType("vlog");
-        return createFolder(request, folder);
+        return createFolder(request, folder, contentId);
     }
 
     @PostMapping("/folders/blog")
-    public ResponseEntity<FolderResponseDTO> createBlogFolder(HttpServletRequest request, @RequestBody Folder folder) {
+    public ResponseEntity<FolderResponseDTO> createBlogFolder(HttpServletRequest request, @RequestBody Folder folder, @RequestBody List<Long> contentId) {
         folder.setType("blog");
-        return createFolder(request, folder);
+        return createFolder(request, folder, contentId);
     }
+
 
     // vlog, blog 별 스크랩 조회
     @GetMapping("/myinfo/scraps/vlog")
