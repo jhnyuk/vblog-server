@@ -1,5 +1,5 @@
 server:
-  port: 80
+  port: 8080
   servlet:
     encoding:
       force: true
@@ -105,3 +105,15 @@ cloud:
     credentials:
       accessKey:
       secretKey:
+
+# spring actuator
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include=health: true
+  endpoint:
+    health:
+      enabled: true
+
