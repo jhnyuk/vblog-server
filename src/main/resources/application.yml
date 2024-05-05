@@ -112,8 +112,9 @@ management:
     enabled-by-default: false
     web:
       exposure:
-        include=health: true
+        include: health, prometheus, swagger-ui, openapi
   endpoint:
     health:
       enabled: true
-
+    prometheus:
+      enabled: true
