@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +14,7 @@ import com.example.vblogserver.domain.user.dto.UserInfoDto;
 import com.example.vblogserver.domain.user.entity.User;
 import com.example.vblogserver.domain.user.repository.UserRepository;
 import com.example.vblogserver.domain.user.service.ImageService;
-import com.example.vblogserver.domain.user.service.UserService;
+import com.example.vblogserver.domain.user.service.UserServiceImpl;
 import com.example.vblogserver.global.jwt.service.JwtService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequiredArgsConstructor
 public class UserImageController {
-	private final UserService userService;
+	private final UserServiceImpl userServiceImpl;
 	private final ImageService imageService;
 	private final JwtService jwtService;
 	private final UserRepository userRepository;
@@ -35,7 +34,7 @@ public class UserImageController {
 		String accessToken = jwtService.extractAccessToken(request)
 			.orElseThrow(() -> new Exception("액세스 토큰이 없습니다."));
 
-		User user = userService.getUserByAccessToken(accessToken);
+		User user = userServiceImpl.getUserByAccessToken(accessToken);
 
 		return ResponseEntity.ok(new UserInfoDto(user));
 	}
@@ -45,13 +44,13 @@ public class UserImageController {
 		String accessToken = jwtService.extractAccessToken(request)
 			.orElseThrow(() -> new Exception("액세스 토큰이 없습니다."));
 
-		User user = userService.getUserByAccessToken(accessToken);
+		User user = userServiceImpl.getUserByAccessToken(accessToken);
 
 		String newImageUrl = imageService.uploadFile(file);
 		user.setImageUrl(newImageUrl);
 		userRepository.save(user);
 
-		user = userService.getUserByAccessToken(accessToken);
+		user = userServiceImpl.getUserByAccessToken(accessToken);
 
 		return ResponseEntity.ok(new UserInfoDto(user));
 	}
@@ -61,14 +60,14 @@ public class UserImageController {
 		String accessToken = jwtService.extractAccessToken(request)
 			.orElseThrow(() -> new Exception("액세스 토큰이 없습니다."));
 
-		User user = userService.getUserByAccessToken(accessToken);
+		User user = userServiceImpl.getUserByAccessToken(accessToken);
 
 		String newImageUrl = imageService.updateProfileImage(user, file);
 		user.setImageUrl(newImageUrl);
 		userRepository.save(user);
 
 		// 사용자 정보 갱신
-		user = userService.getUserByAccessToken(accessToken);
+		user = userServiceImpl.getUserByAccessToken(accessToken);
 
 		return ResponseEntity.ok(new UserInfoDto(user));
 	}
@@ -78,7 +77,7 @@ public class UserImageController {
 		String accessToken = jwtService.extractAccessToken(request)
 			.orElseThrow(() -> new Exception("액세스 토큰이 없습니다."));
 
-		User user = userService.getUserByAccessToken(accessToken);
+		User user = userServiceImpl.getUserByAccessToken(accessToken);
 		imageService.deleteProfileImage(user);
 
 		return ResponseEntity.ok(new UserInfoDto(user));
