@@ -5,6 +5,7 @@ import com.example.vblogserver.domain.review.entity.Review;
 import com.example.vblogserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -15,10 +16,10 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "USERS")
 @AllArgsConstructor
-@Builder
+@NoArgsConstructor
+@SuperBuilder
 @EntityListeners(AuditingEntityListener.class)
 public class User extends BaseEntity {
 

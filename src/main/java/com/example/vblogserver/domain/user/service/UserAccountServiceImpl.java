@@ -33,35 +33,47 @@ public class UserAccountServiceImpl implements UserAccountService {
 	 */
     @Override
     public User signUp(UserSignUpDto userSignUpDto) throws Exception {
+        validateSignUp(userSignUpDto);
 
+        User user = createUserFromSignUpDto(userSignUpDto);
+        userRepository.save(user);
+
+        createDefaultFoldersForUser(user);
+
+        return user;
+    }
+
+    private void validateSignUp(UserSignUpDto userSignUpDto) throws Exception {
+        // Check if loginId already exists
         if (userRepository.findByLoginId(userSignUpDto.getLoginId()).isPresent()) {
             throw new Exception("이미 존재하는 아이디입니다.");
         }
 
-        User user = User.builder()
-                .password(userSignUpDto.getPassword())
+        // Validate loginId length and format
+        if (userSignUpDto.getLoginId().length() < 4 || userSignUpDto.getLoginId().length() > 12) {
+            throw new IllegalArgumentException("아이디의 길이는 4~12자여야 합니다.");
+        }
+
+        if (!userSignUpDto.getLoginId().matches("^[a-zA-Z0-9]+$")) {
+            throw new IllegalArgumentException("아이디는 알파벳 대소문자와 숫자로만 이루어져야 합니다.");
+        }
+    }
+
+    private User createUserFromSignUpDto(UserSignUpDto userSignUpDto) {
+        return User.builder()
+                .password(passwordEncoder.encode(userSignUpDto.getPassword()))
                 .loginId(userSignUpDto.getLoginId())
                 .username(userSignUpDto.getUsername())
                 .role(Role.USER)
                 .build();
+    }
 
-        user.passwordEncode(passwordEncoder);
-        User registeredUser = userRepository.save(user);
-
-        // 사용자 등록 후 기본 폴더 생성
-        Folder defaultVlogFolder = new Folder();
-        defaultVlogFolder.setName("모든 게시글");
-        defaultVlogFolder.setType("vlog");
-        defaultVlogFolder.setUser(registeredUser);
+    private void createDefaultFoldersForUser(User user) {
+        Folder defaultVlogFolder = new Folder("모든 게시글", "vlog", user);
         folderRepository.save(defaultVlogFolder);
 
-        Folder defaultBlogFolder = new Folder();
-        defaultBlogFolder.setName("모든 게시글");
-        defaultBlogFolder.setType("blog");
-        defaultBlogFolder.setUser(registeredUser);
+        Folder defaultBlogFolder = new Folder("모든 게시글", "blog", user);
         folderRepository.save(defaultBlogFolder);
-
-        return registeredUser;
     }
 
     @Override
