@@ -2,7 +2,7 @@ package com.example.vblogserver.domain.user.controller;
 
 import com.example.vblogserver.domain.user.entity.OptionType;
 import com.example.vblogserver.domain.user.service.UserOptionService;
-import com.example.vblogserver.domain.user.service.UserServiceImpl;
+import com.example.vblogserver.domain.user.service.UserAccountServiceImpl;
 import com.example.vblogserver.global.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class UserOptionController {
 
     @Autowired private UserOptionService userOptionService;
     @Autowired private JwtService jwtService;
-    @Autowired private UserServiceImpl userServiceImpl;
+    @Autowired private UserAccountServiceImpl userServiceImpl;
 
     @GetMapping("/options")
     public ResponseEntity<List<OptionType>> getUserOptions(HttpServletRequest request) {

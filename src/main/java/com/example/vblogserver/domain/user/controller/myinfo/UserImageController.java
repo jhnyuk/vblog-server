@@ -14,7 +14,7 @@ import com.example.vblogserver.domain.user.dto.UserInfoDto;
 import com.example.vblogserver.domain.user.entity.User;
 import com.example.vblogserver.domain.user.repository.UserRepository;
 import com.example.vblogserver.domain.user.service.ImageService;
-import com.example.vblogserver.domain.user.service.UserServiceImpl;
+import com.example.vblogserver.domain.user.service.UserAccountServiceImpl;
 import com.example.vblogserver.global.jwt.service.JwtService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequiredArgsConstructor
 public class UserImageController {
-	private final UserServiceImpl userServiceImpl;
+	private final UserAccountServiceImpl userServiceImpl;
 	private final ImageService imageService;
 	private final JwtService jwtService;
 	private final UserRepository userRepository;

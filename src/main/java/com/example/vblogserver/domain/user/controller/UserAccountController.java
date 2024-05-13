@@ -1,12 +1,16 @@
 package com.example.vblogserver.domain.user.controller;
 
-import java.util.Map;
-
+import com.example.vblogserver.domain.user.dto.ResponseDto;
+import com.example.vblogserver.domain.user.dto.UserInfoDto;
+import com.example.vblogserver.domain.user.dto.UserSignUpDto;
 import com.example.vblogserver.domain.user.entity.User;
+import com.example.vblogserver.domain.user.service.UserAccountServiceImpl;
+import com.example.vblogserver.global.jwt.service.JwtService;
 import com.example.vblogserver.global.jwt.util.InvalidTokenException;
 import com.example.vblogserver.global.jwt.util.TokenExpiredException;
-
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,20 +18,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.vblogserver.domain.user.dto.ResponseDto;
-import com.example.vblogserver.domain.user.dto.UserSignUpDto;
-import com.example.vblogserver.domain.user.dto.UserInfoDto;
-import com.example.vblogserver.domain.user.service.UserServiceImpl;
-import com.example.vblogserver.global.jwt.service.JwtService;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class UserController {
+public class UserAccountController {
 
-    @Autowired private UserServiceImpl userServiceImpl;
+    @Autowired private UserAccountServiceImpl userServiceImpl;
     @Autowired private JwtService jwtService;
 
     @PostMapping("/signup")
