@@ -6,18 +6,16 @@ import com.example.vblogserver.domain.user.dto.UserSignUpDto;
 import com.example.vblogserver.domain.user.entity.User;
 import com.example.vblogserver.domain.user.service.UserAccountService;
 import com.example.vblogserver.global.jwt.service.JwtService;
-import com.example.vblogserver.global.jwt.util.InvalidTokenException;
-import com.example.vblogserver.global.jwt.util.TokenExpiredException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +24,11 @@ public class UserAccountController {
 
     private final UserAccountService userAccountService;
     private final JwtService jwtService;
+
+    private String extractToken(HttpServletRequest request, Function<HttpServletRequest, Optional<String>> extractor) {
+        return extractor.apply(request)
+                .orElseThrow(() -> new IllegalArgumentException("토큰이 제공되지 않았습니다."));
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(@Valid @RequestBody UserSignUpDto userSignUpDto, BindingResult bindingResult) throws Exception {
@@ -50,40 +53,22 @@ public class UserAccountController {
 
     @DeleteMapping("/users")
     public ResponseEntity<String> deleteUser(HttpServletRequest request) {
-        String refreshToken = jwtService.extractRefreshToken(request)
-                .orElseThrow(() -> new IllegalArgumentException("리프레시 토큰이 제공되지 않았습니다."));
-
+        String refreshToken = extractToken(request, jwtService::extractRefreshToken);
         userAccountService.deleteUser(refreshToken);
-
         return ResponseEntity.ok("\"회원 탈퇴가 완료되었습니다.\"");
     }
 
-    @GetMapping("/users/info")
-    public ResponseEntity<?> getUserInfo(HttpServletRequest request, HttpServletResponse response) {
-        String accessToken = jwtService.extractAccessToken(request)
-                .orElseThrow(() -> new InvalidTokenException("액세스 토큰이 없습니다."));
-
-        try {
-            User user = userAccountService.getUserByAccessToken(accessToken);
-            return ResponseEntity.ok(new UserInfoDto(user));
-        } catch (TokenExpiredException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                    new ResponseDto(false, "만료된 액세스 토큰입니다.")
-            );
-        } catch (InvalidTokenException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                    new ResponseDto(false, "유효하지 않은 액세스 토큰입니다.")
-            );
-        }
+    @GetMapping("/myinfo")
+    public ResponseEntity<UserInfoDto> getUserInfo(HttpServletRequest request) {
+        String accessToken = extractToken(request, jwtService::extractAccessToken);
+        User user = userAccountService.getUserByAccessToken(accessToken);
+        return ResponseEntity.ok(new UserInfoDto(user));
     }
 
-    @GetMapping("/myinfo/users/name")
-    public ResponseEntity<UserInfoDto> getUserName(HttpServletRequest request) throws Exception {
-        String accessToken = jwtService.extractAccessToken(request)
-            .orElseThrow(() -> new Exception("액세스 토큰이 없습니다."));
-
+    @GetMapping("/myinfo/name")
+    public ResponseEntity<UserInfoDto> getUserName(HttpServletRequest request) {
+        String accessToken = extractToken(request, jwtService::extractAccessToken);
         User user = userAccountService.getUserByAccessToken(accessToken);
-
         return ResponseEntity.ok(new UserInfoDto(user));
     }
 

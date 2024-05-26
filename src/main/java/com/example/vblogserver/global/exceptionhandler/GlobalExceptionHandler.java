@@ -4,6 +4,7 @@ import com.example.vblogserver.domain.user.dto.ResponseDto;
 import com.example.vblogserver.domain.user.util.UserNotFoundException;
 import com.example.vblogserver.global.jwt.util.InvalidTokenException;
 import com.example.vblogserver.global.jwt.util.NotFoundException;
+import com.example.vblogserver.global.jwt.util.TokenExpiredException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,21 @@ class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
-	public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
-		return ResponseEntity.badRequest().body(ex.getMessage());
+	public ResponseEntity<ResponseDto> handleIllegalArgumentException(IllegalArgumentException e) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ResponseDto(false, e.getMessage()));
 	}
+
+	@ExceptionHandler(InvalidTokenException.class)
+	public ResponseEntity<ResponseDto> handleInvalidTokenException(InvalidTokenException e) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(new ResponseDto(false, "유효하지 않은 액세스 토큰입니다."));
+	}
+
+	@ExceptionHandler(TokenExpiredException.class)
+	public ResponseEntity<ResponseDto> handleTokenExpiredException(TokenExpiredException e) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(new ResponseDto(false, "만료된 액세스 토큰입니다."));
+	}
+
 }
