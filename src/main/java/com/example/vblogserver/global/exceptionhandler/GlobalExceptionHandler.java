@@ -1,18 +1,19 @@
-package com.example.vblogserver.global.jwt.util;
+package com.example.vblogserver.global.exceptionhandler;
 
+import com.example.vblogserver.domain.user.dto.ResponseDto;
 import com.example.vblogserver.domain.user.util.UserNotFoundException;
+import com.example.vblogserver.global.jwt.util.InvalidTokenException;
+import com.example.vblogserver.global.jwt.util.NotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import com.example.vblogserver.domain.user.dto.ResponseDto;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@ControllerAdvice
+@RestControllerAdvice
 class GlobalExceptionHandler {
 
 	@ExceptionHandler(InvalidTokenException.class)
@@ -37,5 +38,10 @@ class GlobalExceptionHandler {
 		body.put("reason", ex.getMessage());
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+	}
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+		return ResponseEntity.badRequest().body(ex.getMessage());
 	}
 }
