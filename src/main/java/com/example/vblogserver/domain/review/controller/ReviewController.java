@@ -9,7 +9,7 @@ import com.example.vblogserver.domain.review.entity.Review;
 import com.example.vblogserver.domain.review.repository.ReviewRepository;
 import com.example.vblogserver.domain.user.entity.User;
 import com.example.vblogserver.domain.user.repository.UserRepository;
-import com.example.vblogserver.domain.user.service.UserService;
+import com.example.vblogserver.domain.user.service.UserAccountServiceImpl;
 import com.example.vblogserver.global.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,17 +33,17 @@ public class ReviewController {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final JwtService jwtService;
-    private final UserService userService;
+    private final UserAccountServiceImpl userServiceImpl;
     private final BoardRepository boardRepository;
 
     @Autowired
-    public ReviewController(ReviewService reviewService, BoardService boardService, UserRepository userRepository, ReviewRepository reviewRepository, JwtService jwtService, UserService userService, BoardRepository boardRepository) {
+    public ReviewController(ReviewService reviewService, BoardService boardService, UserRepository userRepository, ReviewRepository reviewRepository, JwtService jwtService, UserAccountServiceImpl userServiceImpl, BoardRepository boardRepository) {
         this.reviewService = reviewService;
         this.boardService = boardService;
         this.userRepository = userRepository;
         this.reviewRepository = reviewRepository;
         this.jwtService = jwtService;
-        this.userService = userService;
+        this.userServiceImpl = userServiceImpl;
         this.boardRepository = boardRepository;
     }
 

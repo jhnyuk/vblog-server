@@ -1,44 +1,32 @@
 package com.example.vblogserver.domain.user.entity;
 
+import com.example.vblogserver.domain.bookmark.entity.Bookmark;
+import com.example.vblogserver.domain.review.entity.Review;
+import com.example.vblogserver.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import org.springframework.data.annotation.CreatedDate;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.example.vblogserver.domain.bookmark.entity.Bookmark;
-import com.example.vblogserver.domain.review.entity.Review;
-
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "USERS")
 @AllArgsConstructor
-@Builder
+@NoArgsConstructor
+@SuperBuilder
 @EntityListeners(AuditingEntityListener.class)
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
+public class User extends BaseEntity {
+
     private String loginId; // 아이디
     private String password; // 비밀번호
     private String username; // 이름
     private String imageUrl; // 프로필 이미지
-    @CreatedDate
-    private LocalDateTime createDate; // 가입 날짜
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -61,13 +49,6 @@ public class User {
 
     public void updateRefreshToken(String updateRefreshToken) {
         this.refreshToken = updateRefreshToken;
-    }
-
-    public User(String loginId, String password, String username) {
-        this.loginId = loginId;
-        this.password = password;
-        this.username = username;
-        this.createDate = LocalDateTime.now();
     }
 
     // 내가 쓴 리뷰

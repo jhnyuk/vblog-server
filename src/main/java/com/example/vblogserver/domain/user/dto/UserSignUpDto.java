@@ -1,15 +1,16 @@
 package com.example.vblogserver.domain.user.dto;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 // 자체 로그인 회원 가입 API에 RequestBody로 사용
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class UserSignUpDto {

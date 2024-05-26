@@ -15,4 +15,10 @@ public class ResponseDto {
 		this.result = result;
 		this.message = message;
 	}
+
+	public static ResponseDto createCheckIdResponse(boolean isDuplicated) {
+		boolean result = !isDuplicated;
+		String message = isDuplicated ? "해당 ID는 이미 사용 중입니다." : "해당 ID는 사용 가능합니다.";
+		return new ResponseDto(result, message);
+	}
 }
