@@ -37,22 +37,14 @@ public class UserAccountController {
     }
 
     @GetMapping("/jwt-test")
-    public String jwtTest() {
-        return "jwtTest 요청 성공";
+    public ResponseEntity<String> jwtTest() {
+        return ResponseEntity.ok("jwtTest 요청 성공");
     }
 
     @GetMapping("/check-id")
     public ResponseEntity<ResponseDto> checkId(@RequestParam String loginId) {
-        ResponseDto response = new ResponseDto();
-        try {
-            boolean isDuplicated = userServiceImpl.isLoginIdDuplicated(loginId);
-            response.setResult(!isDuplicated);
-            response.setMessage(isDuplicated ? "이미 사용 중인 아이디입니다." : "사용 가능한 아이디입니다.");
-        } catch (IllegalArgumentException e) {
-            response.setResult(false);
-            response.setMessage(e.getMessage());
-        }
-
+        boolean isDuplicated = userAccountService.isLoginIdDuplicated(loginId);
+        ResponseDto response = ResponseDto.createCheckIdResponse(isDuplicated);
         return ResponseEntity.ok(response);
     }
 
