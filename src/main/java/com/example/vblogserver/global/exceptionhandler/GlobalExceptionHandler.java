@@ -47,12 +47,6 @@ class GlobalExceptionHandler {
 				.body(new ResponseDto(false, e.getMessage()));
 	}
 
-	@ExceptionHandler(InvalidTokenException.class)
-	public ResponseEntity<ResponseDto> handleInvalidTokenException(InvalidTokenException e) {
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-				.body(new ResponseDto(false, "유효하지 않은 액세스 토큰입니다."));
-	}
-
 	@ExceptionHandler(TokenExpiredException.class)
 	public ResponseEntity<ResponseDto> handleTokenExpiredException(TokenExpiredException e) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
