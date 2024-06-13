@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class UserAccountServiceImpl implements UserAccountService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
