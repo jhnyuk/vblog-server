@@ -17,9 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class UserAccountServiceImpl implements UserAccountService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -44,12 +46,12 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     private void validateSignUp(UserSignUpDto userSignUpDto) throws Exception {
-        // Check if loginId already exists
-        if (userRepository.findByLoginId(userSignUpDto.getLoginId()).isPresent()) {
+        Optional<User> existingUser = userRepository.findByLoginId(userSignUpDto.getLoginId());
+
+        if (existingUser.isPresent()) {
             throw new Exception("이미 존재하는 아이디입니다.");
         }
 
-        // Validate loginId length and format
         if (userSignUpDto.getLoginId().length() < 4 || userSignUpDto.getLoginId().length() > 12) {
             throw new IllegalArgumentException("아이디의 길이는 4~12자여야 합니다.");
         }
